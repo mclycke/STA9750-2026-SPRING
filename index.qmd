@@ -1,0 +1,12 @@
+---
+title: "STA 9750 Spring 2026 - Mary Lycke"
+---
+
+I am a second year candidate in the MS in Business Analytics program at Baruch College with a specialization in Accounting Analytics.
+
+```{r}
+#| include: false
+1+1
+```
+--------------
+Last Updated: `r format(Sys.time(), "%A %m/%d/%Y at %H:%M%p")`
