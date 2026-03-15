@@ -1,0 +1,483 @@
+---
+title: "Mini Project #01"
+author: "Mary Lycke"
+format: 
+  html:
+    theme: minty
+    toc: true
+    toc-location: left
+execute:
+  echo: false
+  message: false
+  warning: false
+---
+```{r}
+library(tidyverse)
+library(glue)
+library(skimr)
+library(scales)
+library(gt)
+
+
+# Task 1
+
+acquire_ipeds_data <- function(start_year=2010, end_year=2024){
+    data_dir <- file.path("data", "mp01")
+    
+    if(!dir.exists(data_dir)){
+        dir.create(data_dir, showWarnings=FALSE, recursive=TRUE)
+    }
+    
+    YEARS <- seq(start_year, end_year)
+    
+    EFA_ALL <- map(YEARS, function(yy){
+        if(yy <= 2022){
+            ef_url <- glue("https://nces.ed.gov/ipeds/datacenter/data/EF{yy}A.zip")
+        } else {
+            ef_url <- glue("https://nces.ed.gov/ipeds/data-generator?year={yy}&tableName=EF{yy}A&HasRV=0&type=csv")
+        }
+        
+        ef_file <- file.path(data_dir, glue("ef{yy}a.csv.zip"))
+        
+        if(!file.exists(ef_file)){
+            message(glue("Downloading Enrollment Data for {yy} from {ef_url}"))
+            download.file(ef_url, destfile = ef_file, quiet=TRUE, mode="wb")    
+        }
+        
+        read_csv(ef_file, show_col_types=FALSE) |>
+            mutate(year = yy, 
+                   enrollment_m_aian = EFAIANM, enrollment_f_aian = EFAIANW,
+                   enrollment_m_asia = EFASIAM, enrollment_f_asia = EFASIAW,
+                   enrollment_m_bkaa = EFBKAAM, enrollment_f_bkaa = EFBKAAW,
+                   enrollment_m_hisp = EFHISPM, enrollment_f_hisp = EFHISPW,
+                   enrollment_m_nhpi = EFNHPIM, enrollment_f_nhpi = EFNHPIW,
+                   enrollment_m_whit = EFWHITM, enrollment_f_whit = EFWHITW,
+                   enrollment_m_2mor = EF2MORM, enrollment_f_2mor = EF2MORW,
+                   enrollment_m_unkn = EFUNKNM, enrollment_f_unkn = EFUNKNW,
+                   enrollment_m_nral = EFNRALM, enrollment_f_nral = EFNRALW
+            ) |> filter(
+                (EFALEVEL %in% c(2, 12)) | (LINE %in% c(1, 15))
+            ) |> mutate(level = case_when(
+                   EFALEVEL == 2 ~ "all undergrad", 
+                   EFALEVEL == 12 ~ "all graduate",
+                   LINE %in% c(1, 15) ~ "first year undergrad"
+               )
+            ) |>
+            select(institution_id = UNITID, year, level, starts_with("enrollment_")) |>
+            group_by(institution_id, year, level) |>
+            summarize(across(starts_with("enrollment_"), sum), .groups = "drop")
+        
+    }) |> bind_rows()
+    
+    DESC_ALL <- map(YEARS, function(yy){
+        if(yy <= 2022){
+            hd_url <- glue("https://nces.ed.gov/ipeds/datacenter/data/HD{yy}.zip")
+        } else {
+            hd_url <- glue("https://nces.ed.gov/ipeds/data-generator?year={yy}&tableName=HD{yy}&HasRV=0&type=csv")
+        }
+        
+        hd_file <- file.path(data_dir, glue("hd{yy}.csv.zip"))
+        
+        if(!file.exists(hd_file)){
+            message(glue("Downloading Institutional Descriptions for {yy} from {hd_url}"))
+            download.file(hd_url, destfile = hd_file, quiet=TRUE, mode="wb")    
+        }
+        
+        suppressWarnings(
+            read_csv(hd_file, show_col_types=FALSE,
+                 locale=locale(encoding=if_else(yy==2024, "utf-8", "windows-1252"))) |>
+            mutate(year = yy, INSTNM) |> 
+            select(institution_id = UNITID, institution_name = INSTNM, state = STABBR, year)
+        )
+        
+    }) |> bind_rows()
+    
+    inner_join(EFA_ALL, DESC_ALL, join_by(institution_id == institution_id, year == year))
+}
+
+IPEDS <- acquire_ipeds_data()
+
+IPEDS <- IPEDS |>
+  mutate(total_enrollment = rowSums(across(starts_with("enrollment_"))))
+
+
+# Task 2
+
+# Create is_cuny column to determine if institution is part of the CUNY system
+IPEDS <- IPEDS |>
+  mutate(is_cuny = str_detect(institution_name, "CUNY"))
+
+
+
+# Task 3
+
+# Create is_calpublic column to determine if insitution is part of the public univeristy system in California
+IPEDS <- IPEDS |>
+  mutate(
+    institution_name = case_when(
+      institution_name == "University of California Hastings College of Law" ~ "University of California College of the Law-San Francisco",
+      institution_name == "University of California-Hastings College of Law" ~ "University of California College of the Law-San Francisco",
+      TRUE ~ institution_name
+    ),
+    is_calpublic = str_detect(institution_name, "University of California|California State University|California Maritime Academy|Humboldt State University|San Diego State University")
+    & state == "CA"
+    & !str_detect(institution_name, "Bethesda|Dominican")
+  )
+```
+
+
+## Initial Exploratory Data Analysis
+<!-- This section runs glimpse, summary, and skim to check the data structure,
+     missing values, and distributions before analysis -->
+<details>
+<summary>Glimpse</summary>
+```{r}
+#| echo: false
+glimpse(IPEDS)
+```
+
+</details>
+
+<details>
+<summary>Summary</summary>
+```{r}
+#| echo: false
+summary(IPEDS)
+```
+
+</details>
+
+<details>
+<summary>Skim</summary>
+```{r}
+#| echo: false
+skim(IPEDS)
+```
+
+</details>
+::: {.callout-note title="Notes on Initial EDA" collapse="true"}
+
+The data has no missing/null values. There are 11,241 unique institutions across the 59 US states and territories.
+
+:::
+
+## Exploratory Questions - Inline Values
+```{r}
+# Task 5
+```
+
+**Q1: How many distinct institutions appear in the dataset?**
+
+There are `r scales::comma(n_distinct(IPEDS$institution_name))` distinct institutions.
+
+**Q2: Graduate students at Baruch in 2024**
+
+There were `r IPEDS |> filter(str_detect(institution_name, "Baruch"), level == "all graduate", year == 2024) |> pull(total_enrollment) |> sum() |> scales::comma()` graduate students enrolled at Baruch in 2024.
+
+**Q3: Total students at Baruch in 2024**
+
+In 2024, Baruch had `r IPEDS |> filter(str_detect(institution_name, "Baruch"), level == "all undergrad", year == 2024) |> pull(total_enrollment) |> sum() |> scales::comma()` undergraduate students and `r IPEDS |> filter(str_detect(institution_name, "Baruch"), level == "all graduate", year == 2024) |> pull(total_enrollment) |> sum() |> scales::comma()` graduate students.
+
+**Q4: Institution with highest number of enrolled female students in 2019**
+
+`r IPEDS |> filter(year == 2019, level == "all undergrad") |> mutate(total_female = rowSums(across(contains("_f_")), na.rm = TRUE)) |> slice_max(total_female, n = 1) |> pull(institution_name)` had the highest female enrollment in 2019 with `r IPEDS |> filter(year == 2019, level == "all undergrad") |> mutate(total_female = rowSums(across(contains("_f_")), na.rm = TRUE)) |> slice_max(total_female, n = 1) |> pull(total_female) |> scales::comma()` female students.
+
+**Q5: Institution with >1000 students and highest NHPI fraction among first-year undergrads in 2024**
+
+`r IPEDS |> filter(year == 2024, level == "first year undergrad") |> mutate(nhpi_total = rowSums(across(ends_with("nhpi")), na.rm = TRUE), nhpi_fraction = nhpi_total / total_enrollment) |> filter(total_enrollment > 1000) |> slice_max(nhpi_fraction, n = 1) |> pull(institution_name)` had the highest NHPI fraction among first-year undergraduates with more than 1,000 students in 2024.
+
+```{r}
+# Task 6
+```
+## Exploratory Questions - Table Answers
+
+**Q1: 5 States with highest number of graduate students across all institutions located in that state**
+```{r}
+IPEDS |>
+  filter(level == "all graduate") |>
+  group_by(state) |>
+  summarize(total_grad = sum(total_enrollment, na.rm = TRUE)) |>
+  slice_max(total_grad, n = 5) |>
+  arrange(desc(total_grad)) |>
+  gt() |>
+  tab_header(title = "Top 5 States by Graduate Student Enrollment") |>
+  fmt_number(columns = total_grad, decimals = 0) |>
+  cols_label(
+    state = "State",
+    total_grad = "Total Graduate Enrollment"
+  )
+```
+**Q2: 2024 CUNY freshman undergraduate enrollment**
+```{r}
+IPEDS |>
+  filter(year == 2024, level == "first year undergrad", is_cuny) |>
+  group_by(institution_name) |>
+  summarize(cuny_enrollment = sum(total_enrollment, na.rm = TRUE)) |>
+  mutate(
+    total_first_year = sum(IPEDS |>
+      filter(year == 2024, level == "first year undergrad") |>
+      pull(total_enrollment), na.rm = TRUE),
+    pct_of_total = cuny_enrollment / total_first_year
+  ) |>
+  arrange(desc(cuny_enrollment)) |>
+  select(institution_name, cuny_enrollment, pct_of_total) |>
+  gt() |>
+  tab_header(title = "CUNY First-Year Undergraduate Enrollment in 2024") |>
+  fmt_number(columns = cuny_enrollment, decimals = 0) |>
+  fmt_percent(columns = pct_of_total, decimals = 2) |>
+  cols_label(
+    institution_name = "Institution",
+    cuny_enrollment = "First-Year Enrollment",
+    pct_of_total = "% of All First-Year Undergrads"
+  )
+```
+**Q3: Change in Baruch's total undergraduate enrollment between 2010 and 2024**
+```{r}
+IPEDS |>
+  filter(str_detect(institution_name, "Baruch"), level == "all undergrad") |>
+  group_by(year) |>
+  summarize(total_enrollment = sum(total_enrollment, na.rm = TRUE)) |>
+  arrange(year) |>
+  mutate(pct_change = (total_enrollment - lag(total_enrollment)) / lag(total_enrollment)) |>
+  gt() |>
+  tab_header(title = "Baruch College Undergraduate Enrollment Over Time") |>
+  fmt_number(columns = total_enrollment, decimals = 0) |>
+  fmt_percent(columns = pct_change, decimals = 2) |>
+  cols_label(
+    year = "Year",
+    total_enrollment = "Total Enrollment",
+    pct_change = "Year-over-Year Change"
+  )
+```
+**Q4: Institution with largest decrease in white student body from 2010 to 2020**
+```{r}
+IPEDS |>
+  filter(level == "all undergrad", year %in% c(2010, 2020)) |>
+  mutate(white_fraction = rowSums(across(ends_with("whit")), na.rm = TRUE) / total_enrollment) |>
+  group_by(institution_name, year) |>
+  summarize(
+    white_fraction = mean(white_fraction, na.rm = TRUE),
+    total_enrollment = sum(total_enrollment, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  pivot_wider(names_from = year, values_from = c(white_fraction, total_enrollment)) |>
+  filter(total_enrollment_2010 > 1000, total_enrollment_2020 > 1000) |>
+  mutate(white_fraction_change = white_fraction_2020 - white_fraction_2010) |>
+  slice_min(white_fraction_change, n = 5) |>
+  select(institution_name, white_fraction_2010, white_fraction_2020, white_fraction_change) |>
+  gt() |>
+  tab_header(title = "Institutions with Largest Decrease in White Student Fraction (2010-2020)") |>
+  fmt_percent(columns = c(white_fraction_2010, white_fraction_2020, white_fraction_change), decimals = 2) |>
+  cols_label(
+    institution_name = "Institution",
+    white_fraction_2010 = "White Fraction 2010",
+    white_fraction_2020 = "White Fraction 2020",
+    white_fraction_change = "Change"
+  )
+```
+**Q5: Top 3 states with largest increase in female undergraduate enrollment**
+```{r}
+IPEDS |>
+  filter(level == "all undergrad", year %in% c(2010, 2024)) |>
+  mutate(female_fraction = rowSums(across(contains("_f_")), na.rm = TRUE) / total_enrollment) |>
+  group_by(state, year) |>
+  summarize(
+    female_fraction = mean(female_fraction, na.rm = TRUE),
+    .groups = "drop"
+  ) |>
+  pivot_wider(names_from = year, values_from = female_fraction) |>
+  mutate(female_fraction_change = `2024` - `2010`) |>
+  slice_max(female_fraction_change, n = 3) |>
+  gt() |>
+  tab_header(title = "Top 3 States with Largest Increase in Female Undergraduate Fraction (2010-2024)") |>
+  fmt_percent(columns = c(`2010`, `2024`, female_fraction_change), decimals = 2) |>
+  cols_label(
+    state = "State",
+    `2010` = "Female Fraction 2010",
+    `2024` = "Female Fraction 2024",
+    female_fraction_change = "Change"
+  )
+```
+
+
+## Op Ed
+
+Author: Mary Lycke, MPA, MSBA
+
+Since the 2023 Supreme Court ruling of Students for Fair Admissions v. Harvard (SFFA) found that affirmative action in most college admissions is unconstitutional. I've been keen to examine how this landmark decision would impact admissions for my own institution, Stony Brook University, as well as for other universities across the state. Despite this change in the law, I want to continue growing an academic community at Stony Brook that is diverse, representing the racial and ethnic composition of New York State. Whether or not affirmative action programs help, hinder, or have no noticeable impact on this valued diversity is the matter at hand.
+
+Known for its STEM programs, Stony Brook is one of the largest schools in the SUNY system. Nestled on the north shore of Long Island, Stony Brook is home to around 18,000 undergraduate and 8,500 graduate students. A significant portion of our student body is international, with an average percentage of about 12% international students over the past ten years. In 2024, about 25% of the undergraduate student body was white, 6% black, 16% hispanic, 36% asian, 10% international, and the remaining being a mix of Native American, two or more races, or unknown.
+
+The demographics at Stony Brook have changed quite a bit between 2010 and 2024, with white first-year undergraduate students being 37% of the incoming freshman in 2010 compared to 18.5% in 2024. On the other hand, there was an increase of 7.2 percentage points for black and hispanic freshman between 2010 and 2024.
+
+For both undergraduate and graduate enrollment, there was a similar shift in the enrollment, with white students making up 41.8% of the total study body population in 2010 and a steady decrease over the next 15 years. White students made up only 29.2% of total student enrollment in 2024. There wasn’t a meaningful increase in the black population of the study body during this time period, but there are notable increases in hispanic and asian populations between 2010 and 2024.
+
+To get an idea on the potential impact of the Supreme Court ruling on Stony Brook’s demographics, I pulled data from University of California - Santa Cruz, a California public university with a similar sized undergraduate student body. Since public institutions of higher education in California were specifically not allowed to implement Affirmative Action programs even before the SFFA decision, a California public university with a similar sized student body would help evaluate impact.
+
+My findings, however, were interesting mainly because of how uninteresting they were. Both institutions show a slight decrease in white and Asian enrollment in 2024, with non-white and non-Asian groups seeing an all-time high in 2024 at Stony Brook. So far, it appears SFFA has not had much of an impact on preventing non-white and non-Asian individuals from gaining access to higher education in the United States.
+
+American society has come a long way since its founding, and our history is riddled with examples of us taking two steps towards equity and one step back. There inevitably will be new factors that will impact university demographics in the coming years, but it will still be imperative to monitor these changes post-2023 to truly understand how SFFA influenced the student bodies of American universities. Whether or not the SFFA decision has further disadvantaged non-white and non-Asian individuals from gaining access to higher education is yet to be seen, but thankfully, so far it seems that there are other factors at hand in bridging equity gaps than just affirmative action.
+
+
+## Op-Ed Supporting Tables
+```{r}
+# Stony Brook First-Year Freshman Demographics Over Time
+IPEDS |>
+  filter(str_detect(institution_name, "Stony Brook"), level == "first year undergrad") |>
+  group_by(year) |>
+  summarize(
+    total = sum(total_enrollment, na.rm = TRUE),
+    white = sum(enrollment_m_whit + enrollment_f_whit, na.rm = TRUE) / total,
+    black = sum(enrollment_m_bkaa + enrollment_f_bkaa, na.rm = TRUE) / total,
+    hispanic = sum(enrollment_m_hisp + enrollment_f_hisp, na.rm = TRUE) / total,
+    asian = sum(enrollment_m_asia + enrollment_f_asia, na.rm = TRUE) / total,
+    international = sum(enrollment_m_nral + enrollment_f_nral, na.rm = TRUE) / total,
+    unknown = sum(enrollment_m_unkn + enrollment_f_unkn, na.rm = TRUE) / total,
+    .groups = "drop"
+  ) |>
+  mutate(across(c(white, black, hispanic, asian, international, unknown), 
+                scales::percent, accuracy = 0.1),
+         total = scales::comma(total)) |>
+  pivot_longer(cols = c(white, black, hispanic, asian, international, unknown, total),
+               names_to = "metric", values_to = "value") |>
+  pivot_wider(names_from = year, values_from = value) |>
+  mutate(metric = case_when(
+    metric == "total" ~ "Total Enrollment",
+    metric == "white" ~ "White",
+    metric == "black" ~ "Black",
+    metric == "hispanic" ~ "Hispanic",
+    metric == "asian" ~ "Asian",
+    metric == "international" ~ "International",
+    metric == "unknown" ~ "Unknown",
+    TRUE ~ metric
+  )) |>
+  mutate(metric = factor(metric, levels = c("White", "Black", "Hispanic", "Asian", 
+                                             "International", "Unknown", "Total Enrollment"))) |>
+  arrange(metric) |>
+  gt() |>
+  tab_header(title = "Stony Brook University First-Year Undergraduate Demographics Over Time") |>
+  cols_label(metric = "Metric")
+
+# Stony Brook Entire Student Body Demographics Over Time
+IPEDS |>
+  filter(str_detect(institution_name, "Stony Brook"), 
+         level %in% c("all undergrad", "all graduate")) |>
+  group_by(year) |>
+  summarize(
+    total = sum(total_enrollment, na.rm = TRUE),
+    white = sum(enrollment_m_whit + enrollment_f_whit, na.rm = TRUE) / total,
+    black = sum(enrollment_m_bkaa + enrollment_f_bkaa, na.rm = TRUE) / total,
+    hispanic = sum(enrollment_m_hisp + enrollment_f_hisp, na.rm = TRUE) / total,
+    asian = sum(enrollment_m_asia + enrollment_f_asia, na.rm = TRUE) / total,
+    international = sum(enrollment_m_nral + enrollment_f_nral, na.rm = TRUE) / total,
+    unknown = sum(enrollment_m_unkn + enrollment_f_unkn, na.rm = TRUE) / total,
+    .groups = "drop"
+  ) |>
+  mutate(across(c(white, black, hispanic, asian, international, unknown), 
+                scales::percent, accuracy = 0.1),
+         total = scales::comma(total)) |>
+  pivot_longer(cols = c(white, black, hispanic, asian, international, unknown, total),
+               names_to = "metric", values_to = "value") |>
+  pivot_wider(names_from = year, values_from = value) |>
+  mutate(metric = case_when(
+    metric == "total" ~ "Total Enrollment",
+    metric == "white" ~ "White",
+    metric == "black" ~ "Black",
+    metric == "hispanic" ~ "Hispanic",
+    metric == "asian" ~ "Asian",
+    metric == "international" ~ "International",
+    metric == "unknown" ~ "Unknown",
+    TRUE ~ metric
+  )) |>
+  mutate(metric = factor(metric, levels = c("White", "Black", "Hispanic", "Asian",
+                                             "International", "Unknown", "Total Enrollment"))) |>
+  arrange(metric) |>
+  gt() |>
+  tab_header(title = "Stony Brook University Total Student Body Demographics Over Time") |>
+  cols_label(metric = "Metric")
+
+# Stony Brook Compared to UC Santa Cruz: White & Asian vs All Other Groups
+IPEDS |>
+  filter(
+    (str_detect(institution_name, "Stony Brook") | 
+     (str_detect(institution_name, "Santa Cruz") & is_calpublic)),
+    level %in% c("all undergrad", "all graduate")
+  ) |>
+  group_by(institution_name, year) |>
+  summarize(
+    total = sum(total_enrollment, na.rm = TRUE),
+    white_and_asian = sum(enrollment_m_whit + enrollment_f_whit +
+                          enrollment_m_asia + enrollment_f_asia, na.rm = TRUE) / total,
+    all_other = sum(enrollment_m_bkaa + enrollment_f_bkaa +
+                    enrollment_m_hisp + enrollment_f_hisp +
+                    enrollment_m_aian + enrollment_f_aian +
+                    enrollment_m_nhpi + enrollment_f_nhpi +
+                    enrollment_m_2mor + enrollment_f_2mor, na.rm = TRUE) / total,
+    .groups = "drop"
+  ) |>
+  mutate(
+    across(c(white_and_asian, all_other), scales::percent, accuracy = 0.1),
+    total = scales::comma(total)
+  ) |>
+  pivot_longer(cols = c(white_and_asian, all_other, total),
+               names_to = "metric", values_to = "value") |>
+  pivot_wider(names_from = institution_name, values_from = value) |>
+  relocate(contains("Stony Brook"), .after = last_col()) |>
+  mutate(metric = case_when(
+    metric == "white_and_asian" ~ "White & Asian",
+    metric == "all_other" ~ "All Other Groups",
+    metric == "total" ~ "Total Enrollment",
+    TRUE ~ metric
+  )) |>
+  mutate(metric = factor(metric, levels = c("White & Asian", "All Other Groups", "Total Enrollment"))) |>
+  arrange(year, metric) |>
+  gt() |>
+  tab_header(title = "Demographic Comparison: Stony Brook Compared to UC Santa Cruz") |>
+  cols_label(
+    metric = "Metric",
+    year = "Year"
+  )
+
+# Stony Brook Compared to UC Santa Cruz: White & Asian vs All Other Groups 2020-2024
+IPEDS |>
+  filter(
+    (str_detect(institution_name, "Stony Brook") | 
+     (str_detect(institution_name, "Santa Cruz") & is_calpublic)),
+    level == "all undergrad",
+    year >= 2020
+  ) |>
+  group_by(institution_name, year) |>
+  summarize(
+    total = sum(total_enrollment, na.rm = TRUE),
+    white_and_asian = sum(enrollment_m_whit + enrollment_f_whit +
+                          enrollment_m_asia + enrollment_f_asia, na.rm = TRUE) / total,
+    all_other = sum(enrollment_m_bkaa + enrollment_f_bkaa +
+                    enrollment_m_hisp + enrollment_f_hisp +
+                    enrollment_m_aian + enrollment_f_aian +
+                    enrollment_m_nhpi + enrollment_f_nhpi +
+                    enrollment_m_2mor + enrollment_f_2mor, na.rm = TRUE) / total,
+    .groups = "drop"
+  ) |>
+  gt() |>
+  tab_header(title = "Demographic Shifts Post-2023 Supreme Court Ruling") |>
+  fmt_number(columns = total, decimals = 0) |>
+  fmt_percent(columns = c(white_and_asian, all_other), decimals = 1) |>
+  cols_label(
+    institution_name = "Institution",
+    year = "Year",
+    total = "Total Enrollment",
+    white_and_asian = "White & Asian",
+    all_other = "All Other Groups"
+  )
+```
+
+
+
+
+::: {.callout-note title="AI Usage Statement" collapse="true"}
+
+Claude was used to help write the code in this project, but all non-code text was generated without the use of any Generative AI tools.
+
+:::
+
+
