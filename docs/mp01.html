@@ -1,0 +1,6245 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Mary Lycke">
+
+<title>Mini Project #01 – STA 9750 Submission Material</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5311e8573f1ca5d29999c4191e502ac3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">STA 9750 Submission Material</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#initial-exploratory-data-analysis" id="toc-initial-exploratory-data-analysis" class="nav-link active" data-scroll-target="#initial-exploratory-data-analysis">Initial Exploratory Data Analysis</a></li>
+  <li><a href="#exploratory-questions---inline-values" id="toc-exploratory-questions---inline-values" class="nav-link" data-scroll-target="#exploratory-questions---inline-values">Exploratory Questions - Inline Values</a></li>
+  <li><a href="#exploratory-questions---table-answers" id="toc-exploratory-questions---table-answers" class="nav-link" data-scroll-target="#exploratory-questions---table-answers">Exploratory Questions - Table Answers</a></li>
+  <li><a href="#op-ed" id="toc-op-ed" class="nav-link" data-scroll-target="#op-ed">Op Ed</a></li>
+  <li><a href="#op-ed-supporting-tables" id="toc-op-ed-supporting-tables" class="nav-link" data-scroll-target="#op-ed-supporting-tables">Op-Ed Supporting Tables</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Mini Project #01</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Mary Lycke </p>
+          </div>
+  </div>
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="initial-exploratory-data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="initial-exploratory-data-analysis">Initial Exploratory Data Analysis</h2>
+<!-- This section runs glimpse, summary, and skim to check the data structure,
+     missing values, and distributions before analysis -->
+<details>
+<summary>
+Glimpse
+</summary>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 219,316
+Columns: 26
+$ institution_id    &lt;dbl&gt; 100654, 100654, 100654, 100663, 100663, 100663, 1006…
+$ year              &lt;int&gt; 2010, 2010, 2010, 2010, 2010, 2010, 2010, 2010, 2010…
+$ level             &lt;chr&gt; "all graduate", "all undergrad", "first year undergr…
+$ enrollment_m_aian &lt;dbl&gt; 2, 2, 0, 5, 13, 0, 0, 0, 0, 10, 47, 1, 1, 2, 0, 10, …
+$ enrollment_f_aian &lt;dbl&gt; 0, 1, 0, 16, 22, 3, 0, 0, 0, 10, 36, 5, 0, 0, 0, 18,…
+$ enrollment_m_asia &lt;dbl&gt; 4, 2, 0, 114, 210, 54, 0, 0, 0, 28, 98, 13, 1, 0, 0,…
+$ enrollment_f_asia &lt;dbl&gt; 8, 7, 1, 191, 245, 55, 1, 3, 0, 24, 105, 16, 7, 1, 0…
+$ enrollment_m_bkaa &lt;dbl&gt; 199, 2250, 527, 182, 889, 147, 59, 42, 0, 47, 323, 4…
+$ enrollment_f_bkaa &lt;dbl&gt; 430, 2498, 555, 669, 2016, 260, 94, 85, 0, 72, 565, …
+$ enrollment_m_hisp &lt;dbl&gt; 0, 9, 3, 37, 79, 14, 4, 9, 0, 10, 76, 10, 2, 7, 2, 5…
+$ enrollment_f_hisp &lt;dbl&gt; 2, 7, 1, 82, 141, 14, 2, 3, 0, 6, 77, 14, 3, 12, 4, …
+$ enrollment_m_nhpi &lt;dbl&gt; 0, 0, 0, 0, 4, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 7, 5…
+$ enrollment_f_nhpi &lt;dbl&gt; 0, 0, 0, 0, 4, 1, 0, 0, 0, 0, 0, 0, 0, 3, 0, 1, 3, 3…
+$ enrollment_m_whit &lt;dbl&gt; 47, 59, 7, 1713, 3081, 455, 90, 81, 3, 729, 2431, 27…
+$ enrollment_f_whit &lt;dbl&gt; 125, 42, 9, 2886, 3601, 490, 67, 46, 1, 437, 1856, 1…
+$ enrollment_m_2mor &lt;dbl&gt; 0, 0, 0, 16, 54, 18, 0, 0, 0, 1, 49, 3, 0, 1, 1, 19,…
+$ enrollment_f_2mor &lt;dbl&gt; 0, 0, 0, 30, 75, 34, 0, 0, 0, 4, 40, 10, 0, 1, 0, 33…
+$ enrollment_m_unkn &lt;dbl&gt; 0, 10, 9, 64, 179, 5, 23, 40, 0, 23, 47, 5, 1, 54, 3…
+$ enrollment_f_unkn &lt;dbl&gt; 4, 10, 7, 92, 206, 7, 39, 61, 0, 10, 63, 7, 3, 71, 4…
+$ enrollment_m_nral &lt;dbl&gt; 37, 23, 2, 242, 99, 5, 0, 0, 0, 134, 120, 12, 4, 12,…
+$ enrollment_f_nral &lt;dbl&gt; 16, 20, 2, 176, 110, 8, 0, 0, 0, 64, 71, 1, 11, 13, …
+$ institution_name  &lt;chr&gt; "Alabama A &amp; M University", "Alabama A &amp; M Universit…
+$ state             &lt;chr&gt; "AL", "AL", "AL", "AL", "AL", "AL", "AL", "AL", "AL"…
+$ total_enrollment  &lt;dbl&gt; 874, 4940, 1123, 6515, 11028, 1571, 379, 370, 4, 160…
+$ is_cuny           &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL…
+$ is_calpublic      &lt;lgl&gt; FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FAL…</code></pre>
+</div>
+</div>
+</details>
+<details>
+<summary>
+Summary
+</summary>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code> institution_id        year         level           enrollment_m_aian 
+ Min.   :100654   Min.   :2010   Length:219316      Min.   :   0.000  
+ 1st Qu.:167039   1st Qu.:2013   Class :character   1st Qu.:   0.000  
+ Median :216597   Median :2016   Mode  :character   Median :   0.000  
+ Mean   :274222   Mean   :2017                      Mean   :   4.521  
+ 3rd Qu.:438586   3rd Qu.:2020                      3rd Qu.:   2.000  
+ Max.   :500555   Max.   :2024                      Max.   :1498.000  
+ enrollment_f_aian  enrollment_m_asia enrollment_f_asia enrollment_m_bkaa 
+ Min.   :   0.000   Min.   :   0.00   Min.   :   0.00   Min.   :    0.00  
+ 1st Qu.:   0.000   1st Qu.:   0.00   1st Qu.:   0.00   1st Qu.:    1.00  
+ Median :   0.000   Median :   1.00   Median :   2.00   Median :    9.00  
+ Mean   :   6.889   Mean   :  45.47   Mean   :  52.39   Mean   :   75.73  
+ 3rd Qu.:   3.000   3rd Qu.:  11.00   3rd Qu.:  16.00   3rd Qu.:   49.00  
+ Max.   :1719.000   Max.   :6541.00   Max.   :6378.00   Max.   :10401.00  
+ enrollment_f_bkaa enrollment_m_hisp enrollment_f_hisp enrollment_m_nhpi 
+ Min.   :    0.0   Min.   :    0.0   Min.   :    0.0   Min.   :   0.000  
+ 1st Qu.:    2.0   1st Qu.:    1.0   1st Qu.:    2.0   1st Qu.:   0.000  
+ Median :   15.0   Median :    7.0   Median :   14.0   Median :   0.000  
+ Mean   :  128.6   Mean   :  120.3   Mean   :  170.7   Mean   :   2.112  
+ 3rd Qu.:   71.0   3rd Qu.:   48.0   3rd Qu.:   74.0   3rd Qu.:   1.000  
+ Max.   :36035.0   Max.   :19464.0   Max.   :27342.0   Max.   :1354.000  
+ enrollment_f_nhpi  enrollment_m_whit enrollment_f_whit enrollment_m_2mor
+ Min.   :   0.000   Min.   :    0.0   Min.   :    0.0   Min.   :   0.00  
+ 1st Qu.:   0.000   1st Qu.:    2.0   1st Qu.:   10.0   1st Qu.:   0.00  
+ Median :   0.000   Median :   33.0   Median :   59.0   Median :   1.00  
+ Mean   :   2.721   Mean   :  351.7   Mean   :  450.9   Mean   :  21.76  
+ 3rd Qu.:   1.000   3rd Qu.:  237.0   3rd Qu.:  314.0   3rd Qu.:  12.00  
+ Max.   :1556.000   Max.   :34014.0   Max.   :74462.0   Max.   :5000.00  
+ enrollment_f_2mor  enrollment_m_unkn  enrollment_f_unkn enrollment_m_nral
+ Min.   :    0.00   Min.   :    0.00   Min.   :    0     Min.   :   0.0   
+ 1st Qu.:    0.00   1st Qu.:    0.00   1st Qu.:    0     1st Qu.:   0.0   
+ Median :    2.00   Median :    1.00   Median :    2     Median :   0.0   
+ Mean   :   30.17   Mean   :   36.47   Mean   :   46     Mean   :  37.4   
+ 3rd Qu.:   17.00   3rd Qu.:   16.00   3rd Qu.:   22     3rd Qu.:   8.0   
+ Max.   :12146.00   Max.   :25579.00   Max.   :52081     Max.   :8181.0   
+ enrollment_f_nral institution_name      state           total_enrollment
+ Min.   :   0.00   Length:219316      Length:219316      Min.   :     1  
+ 1st Qu.:   0.00   Class :character   Class :character   1st Qu.:    62  
+ Median :   0.00   Mode  :character   Mode  :character   Median :   263  
+ Mean   :  31.24                                         Mean   :  1615  
+ 3rd Qu.:   7.00                                         3rd Qu.:  1182  
+ Max.   :6339.00                                         Max.   :253594  
+  is_cuny        is_calpublic   
+ Mode :logical   Mode :logical  
+ FALSE:218606    FALSE:218078   
+ TRUE :710       TRUE :1238     
+                                
+                                
+                                </code></pre>
+</div>
+</div>
+</details>
+<details>
+<summary>
+Skim
+</summary>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">IPEDS</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">219316</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">26</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">3</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">logical</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">21</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 13%">
+<col style="width: 18%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">level</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">institution_name</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">105</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">11241</td>
+<td style="text-align: right;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">state</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: logical</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: left;">count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">is_cuny</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: left;">FAL: 218606, TRU: 710</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">is_calpublic</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.01</td>
+<td style="text-align: left;">FAL: 218078, TRU: 1238</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 9%">
+<col style="width: 13%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 5%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">institution_id</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">274221.74</td>
+<td style="text-align: right;">132743.57</td>
+<td style="text-align: right;">100654</td>
+<td style="text-align: right;">167039</td>
+<td style="text-align: right;">216597</td>
+<td style="text-align: right;">438586</td>
+<td style="text-align: right;">500555</td>
+<td style="text-align: left;">▇▇▁▂▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">year</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2016.65</td>
+<td style="text-align: right;">4.30</td>
+<td style="text-align: right;">2010</td>
+<td style="text-align: right;">2013</td>
+<td style="text-align: right;">2016</td>
+<td style="text-align: right;">2020</td>
+<td style="text-align: right;">2024</td>
+<td style="text-align: left;">▇▇▇▇▆</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrollment_m_aian</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4.52</td>
+<td style="text-align: right;">23.05</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1498</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">enrollment_f_aian</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6.89</td>
+<td style="text-align: right;">37.94</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1719</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrollment_m_asia</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">45.47</td>
+<td style="text-align: right;">230.33</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">6541</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">enrollment_f_asia</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">52.39</td>
+<td style="text-align: right;">241.71</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">6378</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrollment_m_bkaa</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">75.73</td>
+<td style="text-align: right;">250.89</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">49</td>
+<td style="text-align: right;">10401</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">enrollment_f_bkaa</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">128.62</td>
+<td style="text-align: right;">486.55</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">71</td>
+<td style="text-align: right;">36035</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrollment_m_hisp</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">120.28</td>
+<td style="text-align: right;">532.11</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">19464</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">enrollment_f_hisp</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">170.69</td>
+<td style="text-align: right;">726.96</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">74</td>
+<td style="text-align: right;">27342</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrollment_m_nhpi</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.11</td>
+<td style="text-align: right;">15.42</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1354</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">enrollment_f_nhpi</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2.72</td>
+<td style="text-align: right;">21.14</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1556</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrollment_m_whit</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">351.66</td>
+<td style="text-align: right;">1041.29</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">33</td>
+<td style="text-align: right;">237</td>
+<td style="text-align: right;">34014</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">enrollment_f_whit</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">450.90</td>
+<td style="text-align: right;">1270.11</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">59</td>
+<td style="text-align: right;">314</td>
+<td style="text-align: right;">74462</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrollment_m_2mor</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">21.76</td>
+<td style="text-align: right;">75.40</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">5000</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">enrollment_f_2mor</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">30.17</td>
+<td style="text-align: right;">103.28</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">12146</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrollment_m_unkn</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">36.47</td>
+<td style="text-align: right;">226.13</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">25579</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">enrollment_f_unkn</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">46.00</td>
+<td style="text-align: right;">353.77</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">52081</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">enrollment_m_nral</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">37.40</td>
+<td style="text-align: right;">193.94</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">8181</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">enrollment_f_nral</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">31.24</td>
+<td style="text-align: right;">154.22</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">6339</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">total_enrollment</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1615.01</td>
+<td style="text-align: right;">4452.24</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">263</td>
+<td style="text-align: right;">1182</td>
+<td style="text-align: right;">253594</td>
+<td style="text-align: left;">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details>
+<div class="callout callout-style-default callout-note callout-titled" title="Notes on Initial EDA">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Notes on Initial EDA
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The data has no missing/null values. There are 11,241 unique institutions across the 59 US states and territories.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="exploratory-questions---inline-values" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-questions---inline-values">Exploratory Questions - Inline Values</h2>
+<p><strong>Q1: How many distinct institutions appear in the dataset?</strong></p>
+<p>There are 11,241 distinct institutions.</p>
+<p><strong>Q2: Graduate students at Baruch in 2024</strong></p>
+<p>There were 3,585 graduate students enrolled at Baruch in 2024.</p>
+<p><strong>Q3: Total students at Baruch in 2024</strong></p>
+<p>In 2024, Baruch had 16,496 undergraduate students and 3,585 graduate students.</p>
+<p><strong>Q4: Institution with highest number of enrolled female students in 2019</strong></p>
+<p>Western Governors University had the highest female enrollment in 2019 with 62,737 female students.</p>
+<p><strong>Q5: Institution with &gt;1000 students and highest NHPI fraction among first-year undergrads in 2024</strong></p>
+<p>University of Hawaii at Manoa had the highest NHPI fraction among first-year undergraduates with more than 1,000 students in 2024.</p>
+</section>
+<section id="exploratory-questions---table-answers" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-questions---table-answers">Exploratory Questions - Table Answers</h2>
+<p><strong>Q1: 5 States with highest number of graduate students across all institutions located in that state</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="qglxnayfhl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qglxnayfhl table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#qglxnayfhl thead, #qglxnayfhl tbody, #qglxnayfhl tfoot, #qglxnayfhl tr, #qglxnayfhl td, #qglxnayfhl th {
+  border-style: none;
+}
+
+#qglxnayfhl p {
+  margin: 0;
+  padding: 0;
+}
+
+#qglxnayfhl .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#qglxnayfhl .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#qglxnayfhl .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#qglxnayfhl .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#qglxnayfhl .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#qglxnayfhl .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#qglxnayfhl .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#qglxnayfhl .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#qglxnayfhl .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#qglxnayfhl .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#qglxnayfhl .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qglxnayfhl .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#qglxnayfhl .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#qglxnayfhl .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#qglxnayfhl .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qglxnayfhl .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#qglxnayfhl .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#qglxnayfhl .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#qglxnayfhl .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qglxnayfhl .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#qglxnayfhl .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qglxnayfhl .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#qglxnayfhl .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qglxnayfhl .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qglxnayfhl .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qglxnayfhl .gt_left {
+  text-align: left;
+}
+
+#qglxnayfhl .gt_center {
+  text-align: center;
+}
+
+#qglxnayfhl .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#qglxnayfhl .gt_font_normal {
+  font-weight: normal;
+}
+
+#qglxnayfhl .gt_font_bold {
+  font-weight: bold;
+}
+
+#qglxnayfhl .gt_font_italic {
+  font-style: italic;
+}
+
+#qglxnayfhl .gt_super {
+  font-size: 65%;
+}
+
+#qglxnayfhl .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#qglxnayfhl .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#qglxnayfhl .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#qglxnayfhl .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#qglxnayfhl .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#qglxnayfhl .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#qglxnayfhl .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#qglxnayfhl .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#qglxnayfhl div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="2" class="gt_heading gt_title gt_font_normal gt_bottom_border">Top 5 States by Graduate Student Enrollment</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="state" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">State</th>
+<th id="total_grad" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Total Graduate Enrollment</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="state">CA</td>
+<td class="gt_row gt_right" headers="total_grad">4,475,614</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="state">NY</td>
+<td class="gt_row gt_right" headers="total_grad">3,667,601</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="state">TX</td>
+<td class="gt_row gt_right" headers="total_grad">2,911,827</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="state">IL</td>
+<td class="gt_row gt_right" headers="total_grad">2,329,612</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="state">PA</td>
+<td class="gt_row gt_right" headers="total_grad">2,135,193</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><strong>Q2: 2024 CUNY freshman undergraduate enrollment</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="bgrpsjwnjw" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#bgrpsjwnjw table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#bgrpsjwnjw thead, #bgrpsjwnjw tbody, #bgrpsjwnjw tfoot, #bgrpsjwnjw tr, #bgrpsjwnjw td, #bgrpsjwnjw th {
+  border-style: none;
+}
+
+#bgrpsjwnjw p {
+  margin: 0;
+  padding: 0;
+}
+
+#bgrpsjwnjw .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#bgrpsjwnjw .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#bgrpsjwnjw .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#bgrpsjwnjw .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#bgrpsjwnjw .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#bgrpsjwnjw .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#bgrpsjwnjw .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#bgrpsjwnjw .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#bgrpsjwnjw .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#bgrpsjwnjw .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#bgrpsjwnjw .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#bgrpsjwnjw .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#bgrpsjwnjw .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#bgrpsjwnjw .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#bgrpsjwnjw .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bgrpsjwnjw .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#bgrpsjwnjw .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#bgrpsjwnjw .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#bgrpsjwnjw .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bgrpsjwnjw .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#bgrpsjwnjw .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bgrpsjwnjw .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#bgrpsjwnjw .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bgrpsjwnjw .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#bgrpsjwnjw .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#bgrpsjwnjw .gt_left {
+  text-align: left;
+}
+
+#bgrpsjwnjw .gt_center {
+  text-align: center;
+}
+
+#bgrpsjwnjw .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#bgrpsjwnjw .gt_font_normal {
+  font-weight: normal;
+}
+
+#bgrpsjwnjw .gt_font_bold {
+  font-weight: bold;
+}
+
+#bgrpsjwnjw .gt_font_italic {
+  font-style: italic;
+}
+
+#bgrpsjwnjw .gt_super {
+  font-size: 65%;
+}
+
+#bgrpsjwnjw .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#bgrpsjwnjw .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#bgrpsjwnjw .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#bgrpsjwnjw .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#bgrpsjwnjw .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#bgrpsjwnjw .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#bgrpsjwnjw .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#bgrpsjwnjw .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#bgrpsjwnjw div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="3" class="gt_heading gt_title gt_font_normal gt_bottom_border">CUNY First-Year Undergraduate Enrollment in 2024</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="institution_name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Institution</th>
+<th id="cuny_enrollment" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">First-Year Enrollment</th>
+<th id="pct_of_total" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">% of All First-Year Undergrads</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Borough of Manhattan Community College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">4,718</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.15%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY New York City College of Technology</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">3,585</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.12%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Hunter College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">2,897</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.09%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY City College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">2,543</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.08%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Bernard M Baruch College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">2,532</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.08%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY LaGuardia Community College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">2,406</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.08%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">College of Staten Island CUNY</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">2,196</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.07%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY John Jay College of Criminal Justice</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">2,128</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.07%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Queensborough Community College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">1,965</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.06%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Brooklyn College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">1,782</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.06%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Queens College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">1,751</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.06%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Kingsborough Community College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">1,615</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.05%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Lehman College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">1,545</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.05%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Bronx Community College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">1,252</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.04%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Hostos Community College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">844</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.03%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY York College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">766</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.02%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Medgar Evers College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">586</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.02%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">CUNY Stella and Charles Guttman Community College</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">367</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.01%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">CUNY Graduate School and University Center</td>
+<td class="gt_row gt_right" headers="cuny_enrollment">12</td>
+<td class="gt_row gt_right" headers="pct_of_total">0.00%</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><strong>Q3: Change in Baruch’s total undergraduate enrollment between 2010 and 2024</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="gsrxcvczla" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#gsrxcvczla table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#gsrxcvczla thead, #gsrxcvczla tbody, #gsrxcvczla tfoot, #gsrxcvczla tr, #gsrxcvczla td, #gsrxcvczla th {
+  border-style: none;
+}
+
+#gsrxcvczla p {
+  margin: 0;
+  padding: 0;
+}
+
+#gsrxcvczla .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#gsrxcvczla .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#gsrxcvczla .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#gsrxcvczla .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#gsrxcvczla .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#gsrxcvczla .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#gsrxcvczla .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#gsrxcvczla .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#gsrxcvczla .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#gsrxcvczla .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#gsrxcvczla .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#gsrxcvczla .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#gsrxcvczla .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#gsrxcvczla .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#gsrxcvczla .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsrxcvczla .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#gsrxcvczla .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#gsrxcvczla .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#gsrxcvczla .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsrxcvczla .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#gsrxcvczla .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsrxcvczla .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#gsrxcvczla .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsrxcvczla .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#gsrxcvczla .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#gsrxcvczla .gt_left {
+  text-align: left;
+}
+
+#gsrxcvczla .gt_center {
+  text-align: center;
+}
+
+#gsrxcvczla .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#gsrxcvczla .gt_font_normal {
+  font-weight: normal;
+}
+
+#gsrxcvczla .gt_font_bold {
+  font-weight: bold;
+}
+
+#gsrxcvczla .gt_font_italic {
+  font-style: italic;
+}
+
+#gsrxcvczla .gt_super {
+  font-size: 65%;
+}
+
+#gsrxcvczla .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#gsrxcvczla .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#gsrxcvczla .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#gsrxcvczla .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#gsrxcvczla .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#gsrxcvczla .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#gsrxcvczla .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#gsrxcvczla .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#gsrxcvczla div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="3" class="gt_heading gt_title gt_font_normal gt_bottom_border">Baruch College Undergraduate Enrollment Over Time</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Year</th>
+<th id="total_enrollment" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Total Enrollment</th>
+<th id="pct_change" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Year-over-Year Change</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2010</td>
+<td class="gt_row gt_right" headers="total_enrollment">13,120</td>
+<td class="gt_row gt_right" headers="pct_change">NA</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2011</td>
+<td class="gt_row gt_right" headers="total_enrollment">14,266</td>
+<td class="gt_row gt_right" headers="pct_change">8.73%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2012</td>
+<td class="gt_row gt_right" headers="total_enrollment">13,777</td>
+<td class="gt_row gt_right" headers="pct_change">−3.43%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2013</td>
+<td class="gt_row gt_right" headers="total_enrollment">14,082</td>
+<td class="gt_row gt_right" headers="pct_change">2.21%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2014</td>
+<td class="gt_row gt_right" headers="total_enrollment">14,857</td>
+<td class="gt_row gt_right" headers="pct_change">5.50%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2015</td>
+<td class="gt_row gt_right" headers="total_enrollment">15,254</td>
+<td class="gt_row gt_right" headers="pct_change">2.67%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2016</td>
+<td class="gt_row gt_right" headers="total_enrollment">15,210</td>
+<td class="gt_row gt_right" headers="pct_change">−0.29%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2017</td>
+<td class="gt_row gt_right" headers="total_enrollment">15,253</td>
+<td class="gt_row gt_right" headers="pct_change">0.28%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2018</td>
+<td class="gt_row gt_right" headers="total_enrollment">15,024</td>
+<td class="gt_row gt_right" headers="pct_change">−1.50%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2019</td>
+<td class="gt_row gt_right" headers="total_enrollment">15,482</td>
+<td class="gt_row gt_right" headers="pct_change">3.05%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2020</td>
+<td class="gt_row gt_right" headers="total_enrollment">15,774</td>
+<td class="gt_row gt_right" headers="pct_change">1.89%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2021</td>
+<td class="gt_row gt_right" headers="total_enrollment">15,859</td>
+<td class="gt_row gt_right" headers="pct_change">0.54%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2022</td>
+<td class="gt_row gt_right" headers="total_enrollment">15,896</td>
+<td class="gt_row gt_right" headers="pct_change">0.23%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2023</td>
+<td class="gt_row gt_right" headers="total_enrollment">16,086</td>
+<td class="gt_row gt_right" headers="pct_change">1.20%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2024</td>
+<td class="gt_row gt_right" headers="total_enrollment">16,496</td>
+<td class="gt_row gt_right" headers="pct_change">2.55%</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><strong>Q4: Institution with largest decrease in white student body from 2010 to 2020</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="tlrkbduzxd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#tlrkbduzxd table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#tlrkbduzxd thead, #tlrkbduzxd tbody, #tlrkbduzxd tfoot, #tlrkbduzxd tr, #tlrkbduzxd td, #tlrkbduzxd th {
+  border-style: none;
+}
+
+#tlrkbduzxd p {
+  margin: 0;
+  padding: 0;
+}
+
+#tlrkbduzxd .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#tlrkbduzxd .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#tlrkbduzxd .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#tlrkbduzxd .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#tlrkbduzxd .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#tlrkbduzxd .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#tlrkbduzxd .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#tlrkbduzxd .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#tlrkbduzxd .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#tlrkbduzxd .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#tlrkbduzxd .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#tlrkbduzxd .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#tlrkbduzxd .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#tlrkbduzxd .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#tlrkbduzxd .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tlrkbduzxd .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#tlrkbduzxd .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#tlrkbduzxd .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#tlrkbduzxd .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tlrkbduzxd .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#tlrkbduzxd .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tlrkbduzxd .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#tlrkbduzxd .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tlrkbduzxd .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#tlrkbduzxd .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#tlrkbduzxd .gt_left {
+  text-align: left;
+}
+
+#tlrkbduzxd .gt_center {
+  text-align: center;
+}
+
+#tlrkbduzxd .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#tlrkbduzxd .gt_font_normal {
+  font-weight: normal;
+}
+
+#tlrkbduzxd .gt_font_bold {
+  font-weight: bold;
+}
+
+#tlrkbduzxd .gt_font_italic {
+  font-style: italic;
+}
+
+#tlrkbduzxd .gt_super {
+  font-size: 65%;
+}
+
+#tlrkbduzxd .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#tlrkbduzxd .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#tlrkbduzxd .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#tlrkbduzxd .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#tlrkbduzxd .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#tlrkbduzxd .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#tlrkbduzxd .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#tlrkbduzxd .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#tlrkbduzxd div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border">Institutions with Largest Decrease in White Student Fraction (2010-2020)</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="institution_name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Institution</th>
+<th id="white_fraction_2010" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">White Fraction 2010</th>
+<th id="white_fraction_2020" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">White Fraction 2020</th>
+<th id="white_fraction_change" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Change</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">University of the Cumberlands</td>
+<td class="gt_row gt_right" headers="white_fraction_2010">82.25%</td>
+<td class="gt_row gt_right" headers="white_fraction_2020">12.41%</td>
+<td class="gt_row gt_right" headers="white_fraction_change">−69.83%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">New England Institute of Technology</td>
+<td class="gt_row gt_right" headers="white_fraction_2010">66.97%</td>
+<td class="gt_row gt_right" headers="white_fraction_2020">7.92%</td>
+<td class="gt_row gt_right" headers="white_fraction_change">−59.05%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">Saint Joseph's College of Maine</td>
+<td class="gt_row gt_right" headers="white_fraction_2010">70.73%</td>
+<td class="gt_row gt_right" headers="white_fraction_2020">19.71%</td>
+<td class="gt_row gt_right" headers="white_fraction_change">−51.02%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">Montcalm Community College</td>
+<td class="gt_row gt_right" headers="white_fraction_2010">89.47%</td>
+<td class="gt_row gt_right" headers="white_fraction_2020">46.46%</td>
+<td class="gt_row gt_right" headers="white_fraction_change">−43.00%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">Walsh University</td>
+<td class="gt_row gt_right" headers="white_fraction_2010">81.22%</td>
+<td class="gt_row gt_right" headers="white_fraction_2020">42.16%</td>
+<td class="gt_row gt_right" headers="white_fraction_change">−39.06%</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p><strong>Q5: Top 3 states with largest increase in female undergraduate enrollment</strong></p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="iqnqpczgfx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#iqnqpczgfx table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#iqnqpczgfx thead, #iqnqpczgfx tbody, #iqnqpczgfx tfoot, #iqnqpczgfx tr, #iqnqpczgfx td, #iqnqpczgfx th {
+  border-style: none;
+}
+
+#iqnqpczgfx p {
+  margin: 0;
+  padding: 0;
+}
+
+#iqnqpczgfx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#iqnqpczgfx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#iqnqpczgfx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#iqnqpczgfx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#iqnqpczgfx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#iqnqpczgfx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#iqnqpczgfx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#iqnqpczgfx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#iqnqpczgfx .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#iqnqpczgfx .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#iqnqpczgfx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#iqnqpczgfx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#iqnqpczgfx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#iqnqpczgfx .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#iqnqpczgfx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iqnqpczgfx .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#iqnqpczgfx .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#iqnqpczgfx .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#iqnqpczgfx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iqnqpczgfx .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#iqnqpczgfx .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iqnqpczgfx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#iqnqpczgfx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iqnqpczgfx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#iqnqpczgfx .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#iqnqpczgfx .gt_left {
+  text-align: left;
+}
+
+#iqnqpczgfx .gt_center {
+  text-align: center;
+}
+
+#iqnqpczgfx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#iqnqpczgfx .gt_font_normal {
+  font-weight: normal;
+}
+
+#iqnqpczgfx .gt_font_bold {
+  font-weight: bold;
+}
+
+#iqnqpczgfx .gt_font_italic {
+  font-style: italic;
+}
+
+#iqnqpczgfx .gt_super {
+  font-size: 65%;
+}
+
+#iqnqpczgfx .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#iqnqpczgfx .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#iqnqpczgfx .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#iqnqpczgfx .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#iqnqpczgfx .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#iqnqpczgfx .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#iqnqpczgfx .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#iqnqpczgfx .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#iqnqpczgfx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border">Top 3 States with Largest Increase in Female Undergraduate Fraction (2010-2024)</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="state" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">State</th>
+<th id="a2010" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Female Fraction 2010</th>
+<th id="a2024" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Female Fraction 2024</th>
+<th id="female_fraction_change" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Change</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="state">FM</td>
+<td class="gt_row gt_right" headers="2010">53.72%</td>
+<td class="gt_row gt_right" headers="2024">62.87%</td>
+<td class="gt_row gt_right" headers="female_fraction_change">9.15%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="state">AS</td>
+<td class="gt_row gt_right" headers="2010">61.19%</td>
+<td class="gt_row gt_right" headers="2024">70.23%</td>
+<td class="gt_row gt_right" headers="female_fraction_change">9.03%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="state">UT</td>
+<td class="gt_row gt_right" headers="2010">69.10%</td>
+<td class="gt_row gt_right" headers="2024">74.41%</td>
+<td class="gt_row gt_right" headers="female_fraction_change">5.31%</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="op-ed" class="level2">
+<h2 class="anchored" data-anchor-id="op-ed">Op Ed</h2>
+<p>Author: Mary Lycke, MPA, MSBA</p>
+<p>Since the 2023 Supreme Court ruling of Students for Fair Admissions v. Harvard (SFFA) found that affirmative action in most college admissions is unconstitutional. I’ve been keen to examine how this landmark decision would impact admissions for my own institution, Stony Brook University, as well as for other universities across the state. Despite this change in the law, I want to continue growing an academic community at Stony Brook that is diverse, representing the racial and ethnic composition of New York State. Whether or not affirmative action programs help, hinder, or have no noticeable impact on this valued diversity is the matter at hand.</p>
+<p>Known for its STEM programs, Stony Brook is one of the largest schools in the SUNY system. Nestled on the north shore of Long Island, Stony Brook is home to around 18,000 undergraduate and 8,500 graduate students. A significant portion of our student body is international, with an average percentage of about 12% international students over the past ten years. In 2024, about 25% of the undergraduate student body was white, 6% black, 16% hispanic, 36% asian, 10% international, and the remaining being a mix of Native American, two or more races, or unknown.</p>
+<p>The demographics at Stony Brook have changed quite a bit between 2010 and 2024, with white first-year undergraduate students being 37% of the incoming freshman in 2010 compared to 18.5% in 2024. On the other hand, there was an increase of 7.2 percentage points for black and hispanic freshman between 2010 and 2024.</p>
+<p>For both undergraduate and graduate enrollment, there was a similar shift in the enrollment, with white students making up 41.8% of the total study body population in 2010 and a steady decrease over the next 15 years. White students made up only 29.2% of total student enrollment in 2024. There wasn’t a meaningful increase in the black population of the study body during this time period, but there are notable increases in hispanic and asian populations between 2010 and 2024.</p>
+<p>To get an idea on the potential impact of the Supreme Court ruling on Stony Brook’s demographics, I pulled data from University of California - Santa Cruz, a California public university with a similar sized undergraduate student body. Since public institutions of higher education in California were specifically not allowed to implement Affirmative Action programs even before the SFFA decision, a California public university with a similar sized student body would help evaluate impact.</p>
+<p>My findings, however, were interesting mainly because of how uninteresting they were. Both institutions show a slight decrease in white and Asian enrollment in 2024, with non-white and non-Asian groups seeing an all-time high in 2024 at Stony Brook. So far, it appears SFFA has not had much of an impact on preventing non-white and non-Asian individuals from gaining access to higher education in the United States.</p>
+<p>American society has come a long way since its founding, and our history is riddled with examples of us taking two steps towards equity and one step back. There inevitably will be new factors that will impact university demographics in the coming years, but it will still be imperative to monitor these changes post-2023 to truly understand how SFFA influenced the student bodies of American universities. Whether or not the SFFA decision has further disadvantaged non-white and non-Asian individuals from gaining access to higher education is yet to be seen, but thankfully, so far it seems that there are other factors at hand in bridging equity gaps than just affirmative action.</p>
+</section>
+<section id="op-ed-supporting-tables" class="level2">
+<h2 class="anchored" data-anchor-id="op-ed-supporting-tables">Op-Ed Supporting Tables</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div id="qnyuijzvgp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#qnyuijzvgp table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#qnyuijzvgp thead, #qnyuijzvgp tbody, #qnyuijzvgp tfoot, #qnyuijzvgp tr, #qnyuijzvgp td, #qnyuijzvgp th {
+  border-style: none;
+}
+
+#qnyuijzvgp p {
+  margin: 0;
+  padding: 0;
+}
+
+#qnyuijzvgp .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#qnyuijzvgp .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#qnyuijzvgp .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#qnyuijzvgp .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#qnyuijzvgp .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#qnyuijzvgp .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#qnyuijzvgp .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#qnyuijzvgp .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#qnyuijzvgp .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#qnyuijzvgp .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#qnyuijzvgp .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#qnyuijzvgp .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#qnyuijzvgp .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#qnyuijzvgp .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#qnyuijzvgp .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qnyuijzvgp .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#qnyuijzvgp .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#qnyuijzvgp .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#qnyuijzvgp .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qnyuijzvgp .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#qnyuijzvgp .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qnyuijzvgp .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#qnyuijzvgp .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qnyuijzvgp .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#qnyuijzvgp .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#qnyuijzvgp .gt_left {
+  text-align: left;
+}
+
+#qnyuijzvgp .gt_center {
+  text-align: center;
+}
+
+#qnyuijzvgp .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#qnyuijzvgp .gt_font_normal {
+  font-weight: normal;
+}
+
+#qnyuijzvgp .gt_font_bold {
+  font-weight: bold;
+}
+
+#qnyuijzvgp .gt_font_italic {
+  font-style: italic;
+}
+
+#qnyuijzvgp .gt_super {
+  font-size: 65%;
+}
+
+#qnyuijzvgp .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#qnyuijzvgp .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#qnyuijzvgp .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#qnyuijzvgp .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#qnyuijzvgp .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#qnyuijzvgp .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#qnyuijzvgp .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#qnyuijzvgp .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#qnyuijzvgp div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="16" class="gt_heading gt_title gt_font_normal gt_bottom_border">Stony Brook University First-Year Undergraduate Demographics Over Time</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="metric" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Metric</th>
+<th id="a2010" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2010</th>
+<th id="a2011" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2011</th>
+<th id="a2012" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2012</th>
+<th id="a2013" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2013</th>
+<th id="a2014" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2014</th>
+<th id="a2015" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2015</th>
+<th id="a2016" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2016</th>
+<th id="a2017" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2017</th>
+<th id="a2018" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2018</th>
+<th id="a2019" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2019</th>
+<th id="a2020" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2020</th>
+<th id="a2021" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2021</th>
+<th id="a2022" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2022</th>
+<th id="a2023" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2023</th>
+<th id="a2024" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2024</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" headers="metric">White</td>
+<td class="gt_row gt_right" headers="2010">37.0%</td>
+<td class="gt_row gt_right" headers="2011">32.7%</td>
+<td class="gt_row gt_right" headers="2012">34.7%</td>
+<td class="gt_row gt_right" headers="2013">34.1%</td>
+<td class="gt_row gt_right" headers="2014">32.9%</td>
+<td class="gt_row gt_right" headers="2015">30.2%</td>
+<td class="gt_row gt_right" headers="2016">27.8%</td>
+<td class="gt_row gt_right" headers="2017">28.1%</td>
+<td class="gt_row gt_right" headers="2018">26.7%</td>
+<td class="gt_row gt_right" headers="2019">23.3%</td>
+<td class="gt_row gt_right" headers="2020">26.6%</td>
+<td class="gt_row gt_right" headers="2021">26.6%</td>
+<td class="gt_row gt_right" headers="2022">22.7%</td>
+<td class="gt_row gt_right" headers="2023">21.7%</td>
+<td class="gt_row gt_right" headers="2024">18.5%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="metric">Black</td>
+<td class="gt_row gt_right" headers="2010">5.5%</td>
+<td class="gt_row gt_right" headers="2011">6.3%</td>
+<td class="gt_row gt_right" headers="2012">6.1%</td>
+<td class="gt_row gt_right" headers="2013">5.3%</td>
+<td class="gt_row gt_right" headers="2014">5.8%</td>
+<td class="gt_row gt_right" headers="2015">6.7%</td>
+<td class="gt_row gt_right" headers="2016">5.9%</td>
+<td class="gt_row gt_right" headers="2017">7.2%</td>
+<td class="gt_row gt_right" headers="2018">6.5%</td>
+<td class="gt_row gt_right" headers="2019">6.0%</td>
+<td class="gt_row gt_right" headers="2020">5.3%</td>
+<td class="gt_row gt_right" headers="2021">5.8%</td>
+<td class="gt_row gt_right" headers="2022">5.9%</td>
+<td class="gt_row gt_right" headers="2023">6.4%</td>
+<td class="gt_row gt_right" headers="2024">7.1%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="metric">Hispanic</td>
+<td class="gt_row gt_right" headers="2010">9.8%</td>
+<td class="gt_row gt_right" headers="2011">9.1%</td>
+<td class="gt_row gt_right" headers="2012">9.1%</td>
+<td class="gt_row gt_right" headers="2013">8.2%</td>
+<td class="gt_row gt_right" headers="2014">9.8%</td>
+<td class="gt_row gt_right" headers="2015">9.4%</td>
+<td class="gt_row gt_right" headers="2016">11.0%</td>
+<td class="gt_row gt_right" headers="2017">11.1%</td>
+<td class="gt_row gt_right" headers="2018">9.4%</td>
+<td class="gt_row gt_right" headers="2019">10.7%</td>
+<td class="gt_row gt_right" headers="2020">13.2%</td>
+<td class="gt_row gt_right" headers="2021">14.3%</td>
+<td class="gt_row gt_right" headers="2022">14.4%</td>
+<td class="gt_row gt_right" headers="2023">13.7%</td>
+<td class="gt_row gt_right" headers="2024">15.4%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="metric">Asian</td>
+<td class="gt_row gt_right" headers="2010">32.0%</td>
+<td class="gt_row gt_right" headers="2011">33.3%</td>
+<td class="gt_row gt_right" headers="2012">31.5%</td>
+<td class="gt_row gt_right" headers="2013">28.1%</td>
+<td class="gt_row gt_right" headers="2014">27.3%</td>
+<td class="gt_row gt_right" headers="2015">28.1%</td>
+<td class="gt_row gt_right" headers="2016">28.7%</td>
+<td class="gt_row gt_right" headers="2017">30.0%</td>
+<td class="gt_row gt_right" headers="2018">34.1%</td>
+<td class="gt_row gt_right" headers="2019">34.2%</td>
+<td class="gt_row gt_right" headers="2020">39.7%</td>
+<td class="gt_row gt_right" headers="2021">38.2%</td>
+<td class="gt_row gt_right" headers="2022">41.7%</td>
+<td class="gt_row gt_right" headers="2023">43.6%</td>
+<td class="gt_row gt_right" headers="2024">38.7%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="metric">International</td>
+<td class="gt_row gt_right" headers="2010">7.2%</td>
+<td class="gt_row gt_right" headers="2011">9.2%</td>
+<td class="gt_row gt_right" headers="2012">10.5%</td>
+<td class="gt_row gt_right" headers="2013">11.0%</td>
+<td class="gt_row gt_right" headers="2014">15.3%</td>
+<td class="gt_row gt_right" headers="2015">16.1%</td>
+<td class="gt_row gt_right" headers="2016">16.5%</td>
+<td class="gt_row gt_right" headers="2017">13.8%</td>
+<td class="gt_row gt_right" headers="2018">14.2%</td>
+<td class="gt_row gt_right" headers="2019">17.4%</td>
+<td class="gt_row gt_right" headers="2020">5.5%</td>
+<td class="gt_row gt_right" headers="2021">5.9%</td>
+<td class="gt_row gt_right" headers="2022">7.3%</td>
+<td class="gt_row gt_right" headers="2023">7.3%</td>
+<td class="gt_row gt_right" headers="2024">12.3%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="metric">Unknown</td>
+<td class="gt_row gt_right" headers="2010">8.1%</td>
+<td class="gt_row gt_right" headers="2011">8.9%</td>
+<td class="gt_row gt_right" headers="2012">7.7%</td>
+<td class="gt_row gt_right" headers="2013">10.3%</td>
+<td class="gt_row gt_right" headers="2014">6.3%</td>
+<td class="gt_row gt_right" headers="2015">7.0%</td>
+<td class="gt_row gt_right" headers="2016">7.3%</td>
+<td class="gt_row gt_right" headers="2017">7.1%</td>
+<td class="gt_row gt_right" headers="2018">6.3%</td>
+<td class="gt_row gt_right" headers="2019">6.4%</td>
+<td class="gt_row gt_right" headers="2020">6.4%</td>
+<td class="gt_row gt_right" headers="2021">5.9%</td>
+<td class="gt_row gt_right" headers="2022">5.3%</td>
+<td class="gt_row gt_right" headers="2023">4.1%</td>
+<td class="gt_row gt_right" headers="2024">4.6%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="2010">2,741</td>
+<td class="gt_row gt_right" headers="2011">2,520</td>
+<td class="gt_row gt_right" headers="2012">2,676</td>
+<td class="gt_row gt_right" headers="2013">2,709</td>
+<td class="gt_row gt_right" headers="2014">2,855</td>
+<td class="gt_row gt_right" headers="2015">2,836</td>
+<td class="gt_row gt_right" headers="2016">2,934</td>
+<td class="gt_row gt_right" headers="2017">3,167</td>
+<td class="gt_row gt_right" headers="2018">3,383</td>
+<td class="gt_row gt_right" headers="2019">3,372</td>
+<td class="gt_row gt_right" headers="2020">3,322</td>
+<td class="gt_row gt_right" headers="2021">3,416</td>
+<td class="gt_row gt_right" headers="2022">3,347</td>
+<td class="gt_row gt_right" headers="2023">3,569</td>
+<td class="gt_row gt_right" headers="2024">4,042</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class="cell-output-display">
+<div id="zxisxulikh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#zxisxulikh table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#zxisxulikh thead, #zxisxulikh tbody, #zxisxulikh tfoot, #zxisxulikh tr, #zxisxulikh td, #zxisxulikh th {
+  border-style: none;
+}
+
+#zxisxulikh p {
+  margin: 0;
+  padding: 0;
+}
+
+#zxisxulikh .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#zxisxulikh .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#zxisxulikh .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#zxisxulikh .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#zxisxulikh .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#zxisxulikh .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#zxisxulikh .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#zxisxulikh .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#zxisxulikh .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#zxisxulikh .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#zxisxulikh .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#zxisxulikh .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#zxisxulikh .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#zxisxulikh .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#zxisxulikh .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zxisxulikh .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#zxisxulikh .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#zxisxulikh .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#zxisxulikh .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zxisxulikh .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#zxisxulikh .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zxisxulikh .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#zxisxulikh .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zxisxulikh .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#zxisxulikh .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#zxisxulikh .gt_left {
+  text-align: left;
+}
+
+#zxisxulikh .gt_center {
+  text-align: center;
+}
+
+#zxisxulikh .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#zxisxulikh .gt_font_normal {
+  font-weight: normal;
+}
+
+#zxisxulikh .gt_font_bold {
+  font-weight: bold;
+}
+
+#zxisxulikh .gt_font_italic {
+  font-style: italic;
+}
+
+#zxisxulikh .gt_super {
+  font-size: 65%;
+}
+
+#zxisxulikh .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#zxisxulikh .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#zxisxulikh .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#zxisxulikh .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#zxisxulikh .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#zxisxulikh .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#zxisxulikh .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#zxisxulikh .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#zxisxulikh div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="16" class="gt_heading gt_title gt_font_normal gt_bottom_border">Stony Brook University Total Student Body Demographics Over Time</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="metric" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Metric</th>
+<th id="a2010" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2010</th>
+<th id="a2011" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2011</th>
+<th id="a2012" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2012</th>
+<th id="a2013" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2013</th>
+<th id="a2014" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2014</th>
+<th id="a2015" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2015</th>
+<th id="a2016" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2016</th>
+<th id="a2017" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2017</th>
+<th id="a2018" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2018</th>
+<th id="a2019" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2019</th>
+<th id="a2020" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2020</th>
+<th id="a2021" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2021</th>
+<th id="a2022" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2022</th>
+<th id="a2023" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2023</th>
+<th id="a2024" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">2024</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_center" headers="metric">White</td>
+<td class="gt_row gt_right" headers="2010">41.8%</td>
+<td class="gt_row gt_right" headers="2011">41.2%</td>
+<td class="gt_row gt_right" headers="2012">40.4%</td>
+<td class="gt_row gt_right" headers="2013">38.5%</td>
+<td class="gt_row gt_right" headers="2014">39.4%</td>
+<td class="gt_row gt_right" headers="2015">38.6%</td>
+<td class="gt_row gt_right" headers="2016">37.9%</td>
+<td class="gt_row gt_right" headers="2017">36.7%</td>
+<td class="gt_row gt_right" headers="2018">36.3%</td>
+<td class="gt_row gt_right" headers="2019">34.9%</td>
+<td class="gt_row gt_right" headers="2020">35.1%</td>
+<td class="gt_row gt_right" headers="2021">32.6%</td>
+<td class="gt_row gt_right" headers="2022">30.5%</td>
+<td class="gt_row gt_right" headers="2023">30.4%</td>
+<td class="gt_row gt_right" headers="2024">29.2%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="metric">Black</td>
+<td class="gt_row gt_right" headers="2010">6.1%</td>
+<td class="gt_row gt_right" headers="2011">6.0%</td>
+<td class="gt_row gt_right" headers="2012">6.0%</td>
+<td class="gt_row gt_right" headers="2013">5.6%</td>
+<td class="gt_row gt_right" headers="2014">5.9%</td>
+<td class="gt_row gt_right" headers="2015">6.1%</td>
+<td class="gt_row gt_right" headers="2016">6.1%</td>
+<td class="gt_row gt_right" headers="2017">6.3%</td>
+<td class="gt_row gt_right" headers="2018">6.6%</td>
+<td class="gt_row gt_right" headers="2019">6.4%</td>
+<td class="gt_row gt_right" headers="2020">6.2%</td>
+<td class="gt_row gt_right" headers="2021">5.8%</td>
+<td class="gt_row gt_right" headers="2022">5.7%</td>
+<td class="gt_row gt_right" headers="2023">5.8%</td>
+<td class="gt_row gt_right" headers="2024">5.8%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="metric">Hispanic</td>
+<td class="gt_row gt_right" headers="2010">7.7%</td>
+<td class="gt_row gt_right" headers="2011">7.9%</td>
+<td class="gt_row gt_right" headers="2012">8.3%</td>
+<td class="gt_row gt_right" headers="2013">8.8%</td>
+<td class="gt_row gt_right" headers="2014">9.2%</td>
+<td class="gt_row gt_right" headers="2015">9.4%</td>
+<td class="gt_row gt_right" headers="2016">10.0%</td>
+<td class="gt_row gt_right" headers="2017">10.4%</td>
+<td class="gt_row gt_right" headers="2018">10.9%</td>
+<td class="gt_row gt_right" headers="2019">11.2%</td>
+<td class="gt_row gt_right" headers="2020">12.3%</td>
+<td class="gt_row gt_right" headers="2021">12.6%</td>
+<td class="gt_row gt_right" headers="2022">12.9%</td>
+<td class="gt_row gt_right" headers="2023">13.3%</td>
+<td class="gt_row gt_right" headers="2024">13.6%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="metric">Asian</td>
+<td class="gt_row gt_right" headers="2010">18.8%</td>
+<td class="gt_row gt_right" headers="2011">19.4%</td>
+<td class="gt_row gt_right" headers="2012">19.7%</td>
+<td class="gt_row gt_right" headers="2013">18.7%</td>
+<td class="gt_row gt_right" headers="2014">18.8%</td>
+<td class="gt_row gt_right" headers="2015">18.6%</td>
+<td class="gt_row gt_right" headers="2016">18.7%</td>
+<td class="gt_row gt_right" headers="2017">19.0%</td>
+<td class="gt_row gt_right" headers="2018">20.3%</td>
+<td class="gt_row gt_right" headers="2019">21.3%</td>
+<td class="gt_row gt_right" headers="2020">23.3%</td>
+<td class="gt_row gt_right" headers="2021">24.6%</td>
+<td class="gt_row gt_right" headers="2022">26.6%</td>
+<td class="gt_row gt_right" headers="2023">27.9%</td>
+<td class="gt_row gt_right" headers="2024">28.2%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="metric">International</td>
+<td class="gt_row gt_right" headers="2010">12.0%</td>
+<td class="gt_row gt_right" headers="2011">13.4%</td>
+<td class="gt_row gt_right" headers="2012">15.0%</td>
+<td class="gt_row gt_right" headers="2013">15.5%</td>
+<td class="gt_row gt_right" headers="2014">16.9%</td>
+<td class="gt_row gt_right" headers="2015">17.4%</td>
+<td class="gt_row gt_right" headers="2016">17.2%</td>
+<td class="gt_row gt_right" headers="2017">18.0%</td>
+<td class="gt_row gt_right" headers="2018">16.9%</td>
+<td class="gt_row gt_right" headers="2019">17.2%</td>
+<td class="gt_row gt_right" headers="2020">13.5%</td>
+<td class="gt_row gt_right" headers="2021">13.3%</td>
+<td class="gt_row gt_right" headers="2022">14.0%</td>
+<td class="gt_row gt_right" headers="2023">13.3%</td>
+<td class="gt_row gt_right" headers="2024">14.5%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_center" headers="metric">Unknown</td>
+<td class="gt_row gt_right" headers="2010">13.2%</td>
+<td class="gt_row gt_right" headers="2011">11.7%</td>
+<td class="gt_row gt_right" headers="2012">10.0%</td>
+<td class="gt_row gt_right" headers="2013">10.8%</td>
+<td class="gt_row gt_right" headers="2014">7.7%</td>
+<td class="gt_row gt_right" headers="2015">7.7%</td>
+<td class="gt_row gt_right" headers="2016">7.8%</td>
+<td class="gt_row gt_right" headers="2017">7.1%</td>
+<td class="gt_row gt_right" headers="2018">6.5%</td>
+<td class="gt_row gt_right" headers="2019">6.6%</td>
+<td class="gt_row gt_right" headers="2020">7.0%</td>
+<td class="gt_row gt_right" headers="2021">8.4%</td>
+<td class="gt_row gt_right" headers="2022">7.8%</td>
+<td class="gt_row gt_right" headers="2023">6.5%</td>
+<td class="gt_row gt_right" headers="2024">5.7%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="2010">24,363</td>
+<td class="gt_row gt_right" headers="2011">23,920</td>
+<td class="gt_row gt_right" headers="2012">23,946</td>
+<td class="gt_row gt_right" headers="2013">24,143</td>
+<td class="gt_row gt_right" headers="2014">24,607</td>
+<td class="gt_row gt_right" headers="2015">25,272</td>
+<td class="gt_row gt_right" headers="2016">25,734</td>
+<td class="gt_row gt_right" headers="2017">25,989</td>
+<td class="gt_row gt_right" headers="2018">26,256</td>
+<td class="gt_row gt_right" headers="2019">26,814</td>
+<td class="gt_row gt_right" headers="2020">26,782</td>
+<td class="gt_row gt_right" headers="2021">26,608</td>
+<td class="gt_row gt_right" headers="2022">25,710</td>
+<td class="gt_row gt_right" headers="2023">25,865</td>
+<td class="gt_row gt_right" headers="2024">26,689</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class="cell-output-display">
+<div id="ybtiehoslr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ybtiehoslr table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#ybtiehoslr thead, #ybtiehoslr tbody, #ybtiehoslr tfoot, #ybtiehoslr tr, #ybtiehoslr td, #ybtiehoslr th {
+  border-style: none;
+}
+
+#ybtiehoslr p {
+  margin: 0;
+  padding: 0;
+}
+
+#ybtiehoslr .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#ybtiehoslr .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#ybtiehoslr .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#ybtiehoslr .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#ybtiehoslr .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#ybtiehoslr .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#ybtiehoslr .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#ybtiehoslr .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#ybtiehoslr .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#ybtiehoslr .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#ybtiehoslr .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#ybtiehoslr .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#ybtiehoslr .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#ybtiehoslr .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#ybtiehoslr .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ybtiehoslr .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#ybtiehoslr .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#ybtiehoslr .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#ybtiehoslr .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ybtiehoslr .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#ybtiehoslr .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ybtiehoslr .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#ybtiehoslr .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ybtiehoslr .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#ybtiehoslr .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#ybtiehoslr .gt_left {
+  text-align: left;
+}
+
+#ybtiehoslr .gt_center {
+  text-align: center;
+}
+
+#ybtiehoslr .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#ybtiehoslr .gt_font_normal {
+  font-weight: normal;
+}
+
+#ybtiehoslr .gt_font_bold {
+  font-weight: bold;
+}
+
+#ybtiehoslr .gt_font_italic {
+  font-style: italic;
+}
+
+#ybtiehoslr .gt_super {
+  font-size: 65%;
+}
+
+#ybtiehoslr .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#ybtiehoslr .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#ybtiehoslr .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#ybtiehoslr .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#ybtiehoslr .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#ybtiehoslr .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#ybtiehoslr .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#ybtiehoslr .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#ybtiehoslr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="4" class="gt_heading gt_title gt_font_normal gt_bottom_border">Demographic Comparison: Stony Brook Compared to UC Santa Cruz</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Year</th>
+<th id="metric" class="gt_col_heading gt_columns_bottom_border gt_center" data-quarto-table-cell-role="th" scope="col">Metric</th>
+<th id="University-of-California-Santa-Cruz" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">University of California-Santa Cruz</th>
+<th id="Stony-Brook-University" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Stony Brook University</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2010</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">65.1%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">60.6%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2010</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">24.6%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">14.1%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2010</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">17,187</td>
+<td class="gt_row gt_right" headers="Stony Brook University">24,363</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2011</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">62.9%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">60.6%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2011</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">29.3%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">14.3%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2011</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">17,454</td>
+<td class="gt_row gt_right" headers="Stony Brook University">23,920</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2012</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">60.2%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">60.2%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2012</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">34.3%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">14.8%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2012</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">17,404</td>
+<td class="gt_row gt_right" headers="Stony Brook University">23,946</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2013</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">57.6%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">57.2%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2013</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">37.6%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">16.4%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2013</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">17,203</td>
+<td class="gt_row gt_right" headers="Stony Brook University">24,143</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2014</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">55.1%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">58.3%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2014</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">39.2%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">17.2%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2014</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">17,866</td>
+<td class="gt_row gt_right" headers="Stony Brook University">24,607</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2015</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">54.0%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">57.3%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2015</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">38.6%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">17.7%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2015</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">17,868</td>
+<td class="gt_row gt_right" headers="Stony Brook University">25,272</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2016</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">53.4%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">56.6%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2016</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">37.8%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">18.4%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2016</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">18,783</td>
+<td class="gt_row gt_right" headers="Stony Brook University">25,734</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2017</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">53.1%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">55.7%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2017</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">36.5%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">19.2%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2017</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">19,457</td>
+<td class="gt_row gt_right" headers="Stony Brook University">25,989</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2018</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">52.4%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">56.6%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2018</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">35.8%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">19.9%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2018</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">19,700</td>
+<td class="gt_row gt_right" headers="Stony Brook University">26,256</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2019</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">52.5%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">56.2%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2019</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">34.6%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">20.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2019</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">19,494</td>
+<td class="gt_row gt_right" headers="Stony Brook University">26,814</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2020</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">52.7%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">58.4%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2020</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">35.8%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">21.1%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2020</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">19,161</td>
+<td class="gt_row gt_right" headers="Stony Brook University">26,782</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2021</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">53.7%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">57.2%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2021</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">36.3%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">21.1%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2021</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">19,841</td>
+<td class="gt_row gt_right" headers="Stony Brook University">26,608</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2022</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">54.1%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">57.1%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2022</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">36.6%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">21.2%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2022</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">19,478</td>
+<td class="gt_row gt_right" headers="Stony Brook University">25,710</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2023</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">54.3%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">58.3%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2023</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">37.4%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">22.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2023</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">19,764</td>
+<td class="gt_row gt_right" headers="Stony Brook University">25,865</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2024</td>
+<td class="gt_row gt_center" headers="metric">White &amp; Asian</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">53.9%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">57.5%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_right" headers="year">2024</td>
+<td class="gt_row gt_center" headers="metric">All Other Groups</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">37.9%</td>
+<td class="gt_row gt_right" headers="Stony Brook University">22.4%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_right" headers="year">2024</td>
+<td class="gt_row gt_center" headers="metric">Total Enrollment</td>
+<td class="gt_row gt_right" headers="University of California-Santa Cruz">19,938</td>
+<td class="gt_row gt_right" headers="Stony Brook University">26,689</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+<div class="cell-output-display">
+<div id="pjeblugtxo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#pjeblugtxo table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#pjeblugtxo thead, #pjeblugtxo tbody, #pjeblugtxo tfoot, #pjeblugtxo tr, #pjeblugtxo td, #pjeblugtxo th {
+  border-style: none;
+}
+
+#pjeblugtxo p {
+  margin: 0;
+  padding: 0;
+}
+
+#pjeblugtxo .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#pjeblugtxo .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#pjeblugtxo .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#pjeblugtxo .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#pjeblugtxo .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#pjeblugtxo .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#pjeblugtxo .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#pjeblugtxo .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#pjeblugtxo .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#pjeblugtxo .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#pjeblugtxo .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#pjeblugtxo .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#pjeblugtxo .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#pjeblugtxo .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#pjeblugtxo .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pjeblugtxo .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#pjeblugtxo .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#pjeblugtxo .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#pjeblugtxo .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pjeblugtxo .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#pjeblugtxo .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pjeblugtxo .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#pjeblugtxo .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pjeblugtxo .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#pjeblugtxo .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#pjeblugtxo .gt_left {
+  text-align: left;
+}
+
+#pjeblugtxo .gt_center {
+  text-align: center;
+}
+
+#pjeblugtxo .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#pjeblugtxo .gt_font_normal {
+  font-weight: normal;
+}
+
+#pjeblugtxo .gt_font_bold {
+  font-weight: bold;
+}
+
+#pjeblugtxo .gt_font_italic {
+  font-style: italic;
+}
+
+#pjeblugtxo .gt_super {
+  font-size: 65%;
+}
+
+#pjeblugtxo .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#pjeblugtxo .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#pjeblugtxo .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#pjeblugtxo .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#pjeblugtxo .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#pjeblugtxo .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#pjeblugtxo .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#pjeblugtxo .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#pjeblugtxo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="5" class="gt_heading gt_title gt_font_normal gt_bottom_border">Demographic Shifts Post-2023 Supreme Court Ruling</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="institution_name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Institution</th>
+<th id="year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Year</th>
+<th id="total" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Total Enrollment</th>
+<th id="white_and_asian" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">White &amp; Asian</th>
+<th id="all_other" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">All Other Groups</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">Stony Brook University</td>
+<td class="gt_row gt_right" headers="year">2020</td>
+<td class="gt_row gt_right" headers="total">18,010</td>
+<td class="gt_row gt_right" headers="white_and_asian">59.2%</td>
+<td class="gt_row gt_right" headers="all_other">23.2%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">Stony Brook University</td>
+<td class="gt_row gt_right" headers="year">2021</td>
+<td class="gt_row gt_right" headers="total">17,999</td>
+<td class="gt_row gt_right" headers="white_and_asian">60.2%</td>
+<td class="gt_row gt_right" headers="all_other">23.3%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">Stony Brook University</td>
+<td class="gt_row gt_right" headers="year">2022</td>
+<td class="gt_row gt_right" headers="total">17,509</td>
+<td class="gt_row gt_right" headers="white_and_asian">61.1%</td>
+<td class="gt_row gt_right" headers="all_other">23.7%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">Stony Brook University</td>
+<td class="gt_row gt_right" headers="year">2023</td>
+<td class="gt_row gt_right" headers="total">17,549</td>
+<td class="gt_row gt_right" headers="white_and_asian">62.1%</td>
+<td class="gt_row gt_right" headers="all_other">24.4%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">Stony Brook University</td>
+<td class="gt_row gt_right" headers="year">2024</td>
+<td class="gt_row gt_right" headers="total">18,263</td>
+<td class="gt_row gt_right" headers="white_and_asian">60.3%</td>
+<td class="gt_row gt_right" headers="all_other">25.0%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">University of California-Santa Cruz</td>
+<td class="gt_row gt_right" headers="year">2020</td>
+<td class="gt_row gt_right" headers="total">17,207</td>
+<td class="gt_row gt_right" headers="white_and_asian">53.1%</td>
+<td class="gt_row gt_right" headers="all_other">37.5%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">University of California-Santa Cruz</td>
+<td class="gt_row gt_right" headers="year">2021</td>
+<td class="gt_row gt_right" headers="total">17,864</td>
+<td class="gt_row gt_right" headers="white_and_asian">54.3%</td>
+<td class="gt_row gt_right" headers="all_other">38.2%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">University of California-Santa Cruz</td>
+<td class="gt_row gt_right" headers="year">2022</td>
+<td class="gt_row gt_right" headers="total">17,502</td>
+<td class="gt_row gt_right" headers="white_and_asian">55.0%</td>
+<td class="gt_row gt_right" headers="all_other">38.5%</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="institution_name">University of California-Santa Cruz</td>
+<td class="gt_row gt_right" headers="year">2023</td>
+<td class="gt_row gt_right" headers="total">17,812</td>
+<td class="gt_row gt_right" headers="white_and_asian">55.4%</td>
+<td class="gt_row gt_right" headers="all_other">39.2%</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="institution_name">University of California-Santa Cruz</td>
+<td class="gt_row gt_right" headers="year">2024</td>
+<td class="gt_row gt_right" headers="total">17,940</td>
+<td class="gt_row gt_right" headers="white_and_asian">54.9%</td>
+<td class="gt_row gt_right" headers="all_other">39.8%</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="AI Usage Statement">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>AI Usage Statement
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Claude was used to help write the code in this project, but all non-code text was generated without the use of any Generative AI tools.</p>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/mclycke\.github\.io\/STA9750-2026-SPRING\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
