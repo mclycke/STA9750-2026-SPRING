@@ -1,0 +1,57 @@
+er0driguez:
+  evaluator: mclycke
+  teammate: er0driguez
+  n_questions: 5
+  questions:
+    OQ: 5
+    SQ: 5
+    DS: 5
+    RR: 5
+    PR: 5
+  overall_comments:
+    positive: Evelyn does thorough review of work before submission. She created our
+      most recent presentation deck which came out great. She also helps the team
+      with technical advice.
+    negative: I can't think of anything that makes it challenging to work with her.
+    advice: Nothing, she's a great teammate.
+    instructor: ''
+  cycle: mid
+jackeee101:
+  evaluator: mclycke
+  teammate: jackeee101
+  n_questions: 5
+  questions:
+    OQ: 5
+    SQ: 5
+    DS: 5
+    RR: 5
+    PR: 5
+  overall_comments:
+    positive: Jackie takes constructive feedback very well and was able to incorporate
+      suggestions into her parts in both presentations with ease.
+    negative: There is nothing notable that makes it challegning to work with Jackie.
+    advice: |-
+      I have no recommendations, it's been great to work with Jackie so far.
+      Maybe just to turn on her camera during presentations, it's nice to see folks' faces while they're presenting.
+    instructor: N/A
+  cycle: mid
+raulsolanavarro:
+  evaluator: mclycke
+  teammate: raulsolanavarro
+  n_questions: 5
+  questions:
+    OQ: 5
+    SQ: 5
+    DS: 5
+    RR: 5
+    PR: 5
+  overall_comments:
+    positive: |-
+      Raul is a great organizer and helped to team kickstart the project process by setting meeting times and managing calendar invites.
+      Raul is very rubric-oriented which helps guide us in our work to make sure we're completing all of the requirements to the best of our abilities.
+    negative: Nothing, Raul is a great teammate.
+    advice: Nothing notable to share.
+    instructor: N/A
+  cycle: mid
+evaluator: mclycke
+

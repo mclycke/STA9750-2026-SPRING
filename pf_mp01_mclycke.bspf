@@ -1,0 +1,157 @@
+peer_feedback_assignment_1:
+  issue_number: 31
+  issue_owner: raulsolanavarro
+  issue_ok: no
+  issue_status: Could not locate your AI Usage Statement - '.callout-note' block title
+    incorrect.
+  overall_comments:
+    positive: .na.character
+    negative: .na.character
+    advice: .na.character
+  scores:
+    Written Communication:
+      score: 10.0
+      comment: Raul did a great job outlining the project as a report, with a clear
+        introduction, context for where the data came from, and well written responses
+        for the exploratory questions.
+    Project Skeleton:
+      score: .na.integer
+      comment: .na.character
+    Tables & Document Presentation:
+      score: .na.integer
+      comment: .na.character
+    Data Visualization:
+      score: .na.integer
+      comment: .na.character
+    Exploratory Data Analysis:
+      score: .na.integer
+      comment: .na.character
+    Code Quality:
+      score: .na.integer
+      comment: .na.character
+    Data Preparation:
+      score: .na.integer
+      comment: .na.character
+    Analysis and Findings:
+      score: .na.integer
+      comment: .na.character
+    Extra Credit:
+      score: .na.integer
+      comment: .na.character
+  mp_number: 1.0
+peer_feedback_assignment_2:
+  issue_number: .na.integer
+  issue_owner: .na.character
+  issue_ok: .na
+  issue_status: .na.character
+  overall_comments:
+    positive: .na.character
+    negative: .na.character
+    advice: .na.character
+  scores:
+    Written Communication:
+      score: .na.integer
+      comment: .na.character
+    Project Skeleton:
+      score: .na.integer
+      comment: .na.character
+    Tables & Document Presentation:
+      score: .na.integer
+      comment: .na.character
+    Data Visualization:
+      score: .na.integer
+      comment: .na.character
+    Exploratory Data Analysis:
+      score: .na.integer
+      comment: .na.character
+    Code Quality:
+      score: .na.integer
+      comment: .na.character
+    Data Preparation:
+      score: .na.integer
+      comment: .na.character
+    Analysis and Findings:
+      score: .na.integer
+      comment: .na.character
+    Extra Credit:
+      score: .na.integer
+      comment: .na.character
+  mp_number: 1.0
+peer_feedback_assignment_3:
+  issue_number: .na.integer
+  issue_owner: .na.character
+  issue_ok: .na
+  issue_status: .na.character
+  overall_comments:
+    positive: .na.character
+    negative: .na.character
+    advice: .na.character
+  scores:
+    Written Communication:
+      score: .na.integer
+      comment: .na.character
+    Project Skeleton:
+      score: .na.integer
+      comment: .na.character
+    Tables & Document Presentation:
+      score: .na.integer
+      comment: .na.character
+    Data Visualization:
+      score: .na.integer
+      comment: .na.character
+    Exploratory Data Analysis:
+      score: .na.integer
+      comment: .na.character
+    Code Quality:
+      score: .na.integer
+      comment: .na.character
+    Data Preparation:
+      score: .na.integer
+      comment: .na.character
+    Analysis and Findings:
+      score: .na.integer
+      comment: .na.character
+    Extra Credit:
+      score: .na.integer
+      comment: .na.character
+  mp_number: 1.0
+peer_feedback_assignment_4:
+  issue_number: .na.integer
+  issue_owner: .na.character
+  issue_ok: .na
+  issue_status: .na.character
+  overall_comments:
+    positive: .na.character
+    negative: .na.character
+    advice: .na.character
+  scores:
+    Written Communication:
+      score: .na.integer
+      comment: .na.character
+    Project Skeleton:
+      score: .na.integer
+      comment: .na.character
+    Tables & Document Presentation:
+      score: .na.integer
+      comment: .na.character
+    Data Visualization:
+      score: .na.integer
+      comment: .na.character
+    Exploratory Data Analysis:
+      score: .na.integer
+      comment: .na.character
+    Code Quality:
+      score: .na.integer
+      comment: .na.character
+    Data Preparation:
+      score: .na.integer
+      comment: .na.character
+    Analysis and Findings:
+      score: .na.integer
+      comment: .na.character
+    Extra Credit:
+      score: .na.integer
+      comment: .na.character
+  mp_number: 1.0
+evaluator: mclycke
+
