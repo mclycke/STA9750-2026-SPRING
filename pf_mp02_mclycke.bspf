@@ -1,0 +1,149 @@
+peer_feedback_assignment_1:
+  issue_number: 58
+  issue_owner: anapau-tapia
+  issue_ok: no
+  issue_status: Could not locate your AI Usage Statement - No '.callout-note' block.
+  overall_comments:
+    positive: The submission has a clear, uncluttered formatting theme.
+    negative: |-
+      The submission requires further context on the responses given.
+      The submission is missing some tasks.
+    advice: |-
+      In order for the callout-note to render, the submission needs ```{r} before the note and ``` after.
+      It would be good to use a pattern for how headers are used in the rendered document, e.g. sections are given a large header while questions have a small header to clearly divide up the document. This will help make it easier for readers to follow and will give it some "flow".
+  scores:
+    Written Communication:
+      score: 3.0
+      comment: The only writting included in the submission is a short introduction
+        and then some findings detail in the Task 5 responses.
+    Project Skeleton:
+      score: 3.0
+      comment: Tasks 6 and 7 are skipped and there is no rendered AI usage statement.
+    Tables & Document Presentation:
+      score: 3.0
+      comment: The tables that were included are presented fine, but there are two
+        tables missing.
+    Data Visualization:
+      score: 0.0
+      comment: There are no visualizations included in this submission to review.
+    Exploratory Data Analysis:
+      score: 10.0
+      comment: DEFAULT SCORE
+    Code Quality:
+      score: 4.0
+      comment: For the code that is included in the submission, it is labeled and
+        easy to follow. However, it appears that some incorrect answers may be given
+        from the code used.
+    Data Preparation:
+      score: 10.0
+      comment: DEFAULT SCORE
+    Analysis and Findings:
+      score: 2.0
+      comment: There are very few analyses and findings provided in the submission.
+        There is limited analysis provided in the tables that are included from Task
+        5.
+    Extra Credit:
+      score: 0.0
+      comment: Not completed
+  mp_number: 2.0
+peer_feedback_assignment_2:
+  issue_number: 59
+  issue_owner: miggonzalz
+  issue_ok: yes
+  issue_status: OK
+  overall_comments:
+    positive: The flow of the final insights task is nice, easy to read, and has good
+      visuals.
+    negative: I'd suggest either hiding or excluding descriptive statistics from the
+      rendered document. They take up a lot of room and hinder the flow of the overall
+      report.
+    advice: Either include a dropdown to view initial statistics or exclude from the
+      rendered document.
+  scores:
+    Written Communication:
+      score: 6.0
+      comment: The key finds are there and are not difficult to discern, but there
+        are some grammatical errors.
+    Project Skeleton:
+      score: 7.0
+      comment: All tasks are completed without any minor flaws.
+    Tables & Document Presentation:
+      score: 8.0
+      comment: Tables are well formatted and easy to read, with nice titles and descriptions.
+    Data Visualization:
+      score: 6.0
+      comment: The label for the values on the x axis for Task 6 Q1 could be improved.
+        Using [15,20] to denote an age group randing from 15-20 years old is not immediately
+        apparent to the reader. Additionally, I would suggest removing sleeping as
+        an activity in the graph for Q2. Most people are spending 7-9 hours sleeping
+        per day, so including this activity distorts what people are doing during
+        the summer months.
+    Exploratory Data Analysis:
+      score: 10.0
+      comment: DEFAULT SCORE
+    Code Quality:
+      score: 8.0
+      comment: Code is clear with comments explaining what is being accomplished with
+        each block.
+    Data Preparation:
+      score: 10.0
+      comment: DEFAULT SCORE
+    Analysis and Findings:
+      score: 8.0
+      comment: The report has clear findings explained for the three groups along
+        with a nice graphic that demonstrates where each demographic is at in four
+        major categories.
+    Extra Credit:
+      score: 6.0
+      comment: The submission includes both a completed data relationship diagram
+        and a ring visualization to use in the app.
+  mp_number: 2.0
+peer_feedback_assignment_3:
+  issue_number: 60
+  issue_owner: maryononye
+  issue_ok: yes
+  issue_status: OK
+  overall_comments:
+    positive: This submission has good written context that helps the reader understand
+      what is being accomplished.
+    negative: To exclude code blocks from the rendered document.
+    advice: Exclude code blocks from rendered document.
+  scores:
+    Written Communication:
+      score: 8.0
+      comment: The submission has thorough context for each assigned task, making
+        it easy to follow through the report.
+    Project Skeleton:
+      score: 7.0
+      comment: The submission has all provided tasks completed satisfactorily. Responses
+        are thorough.
+    Tables & Document Presentation:
+      score: 4.0
+      comment: It is difficult to locate tables in the rendered document because code
+        blocks are included in the rendered document, visually taking up more space
+        than the tables themselves.
+    Data Visualization:
+      score: 6.0
+      comment: Data visualizations could have used color to make them more "publication"
+        ready.
+    Exploratory Data Analysis:
+      score: 10.0
+      comment: DEFAULT SCORE
+    Code Quality:
+      score: 7.0
+      comment: Code is easy to follow, but comments walking through what is being
+        accomplished did not necessarily need to be rendered. Additionally, it is
+        distracting including code blocks in the rendered document.
+    Data Preparation:
+      score: 10.0
+      comment: DEFAULT SCORE
+    Analysis and Findings:
+      score: 7.0
+      comment: Analysis is thorough, but data could be presented in a more succinct
+        way, particularly by combining all data into a single table.
+    Extra Credit:
+      score: 0.0
+      comment: No extra credit tasks were completed.
+  mp_number: 2.0
+evaluator: mclycke
+

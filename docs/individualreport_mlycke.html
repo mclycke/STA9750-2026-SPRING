@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.27">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>individualreport_mlycke – STA 9750 Submission Material</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-5311e8573f1ca5d29999c4191e502ac3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-fixed fullcontent quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">STA 9750 Submission Material</span>
+    </a>
+  </div>
+        <div class="quarto-navbar-tools tools-end">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<p>library(dplyr)</p>
+<p>agency_ratio &lt;- sr_with_sla %&gt;% filter(sla_status == “measurable”, !is.na(sla_hours), sla_hours &gt; 0) %&gt;% group_by(agency) %&gt;% summarise( n_total = n(), n_closed = sum(!is.na(resolution_hours) &amp; resolution_hours &gt;= 0), pct_closed = n_closed / n_total, median_resolution_hrs = median(resolution_hours[!is.na(resolution_hours) &amp; resolution_hours &gt;= 0]), median_sla_hrs = median(sla_hours), ratio = median_resolution_hrs / median_sla_hrs, # Compliance among CLOSED tickets only compliance_closed = mean(met_sla[!is.na(resolution_hours) &amp; resolution_hours &gt;= 0], na.rm = TRUE), # Compliance counting open-and-overdue as failures compliance_all = mean(met_sla, na.rm = TRUE), .groups = “drop” ) %&gt;% filter(n_total &gt;= 100) %&gt;% arrange(ratio)</p>
+<p>print(agency_ratio, n = Inf)</p>
+<p>flagged &lt;- agency_ratio %&gt;% filter(ratio &lt; 0.25 | compliance_closed == 0 | compliance_closed &gt;= 0.98 | compliance_all == 0)</p>
+<p>cat(“— Flagged agencies —”) print(flagged, n = Inf)</p>
+<p>target_agency &lt;- “NYPD”</p>
+<p>agency_breakdown &lt;- sr_with_sla %&gt;% filter(sla_status == “measurable”, agency == target_agency, !is.na(sla_hours), sla_hours &gt; 0) %&gt;% group_by(complaint_type) %&gt;% summarise( n_total = n(), n_closed = sum(!is.na(resolution_hours) &amp; resolution_hours &gt;= 0), pct_closed = n_closed / n_total, median_resolution_hrs = median(resolution_hours[!is.na(resolution_hours) &amp; resolution_hours &gt;= 0]), p25_resolution_hrs = quantile(resolution_hours[!is.na(resolution_hours) &amp; resolution_hours &gt;= 0], 0.25, na.rm = TRUE), p75_resolution_hrs = quantile(resolution_hours[!is.na(resolution_hours) &amp; resolution_hours &gt;= 0], 0.75, na.rm = TRUE), median_sla_hrs = median(sla_hours), ratio = median_resolution_hrs / median_sla_hrs, compliance_closed = mean(met_sla[!is.na(resolution_hours) &amp; resolution_hours &gt;= 0], na.rm = TRUE), compliance_all = mean(met_sla, na.rm = TRUE), .groups = “drop” ) %&gt;% filter(n_total &gt;= 30) %&gt;% arrange(ratio)</p>
+<p>print(agency_breakdown, n = Inf)</p>
+<section id="section" class="level1">
+<h1>=============================================================================</h1>
+</section>
+<section id="nyc-311-sla-compliance-analysis-data-pull-join-scaffold" class="level1">
+<h1>NYC 311 SLA Compliance Analysis — Data Pull &amp; Join Scaffold</h1>
+</section>
+<section id="window-jan-1-2022-through-dec-31-2025" class="level1">
+<h1>Window: Jan 1, 2022 through Dec 31, 2025</h1>
+</section>
+<section id="section-1" class="level1">
+<h1></h1>
+</section>
+<section id="datasets" class="level1">
+<h1>Datasets:</h1>
+</section>
+<section id="service-requests-from-2020-to-present-erm2-nwe9" class="level1">
+<h1>- 311 Service Requests from 2020 to Present (erm2-nwe9)</h1>
+</section>
+<section id="service-level-agreements-cs9t-e3x8" class="level1">
+<h1>- 311 Service Level Agreements (cs9t-e3x8)</h1>
+</section>
+<section id="section-2" class="level1">
+<h1></h1>
+</section>
+<section id="what-this-script-does" class="level1">
+<h1>What this script does:</h1>
+</section>
+<section id="pulls-the-full-sla-lookup-table-small-1500-rows." class="level1">
+<h1>1. Pulls the full SLA lookup table (small — ~1,500 rows).</h1>
+</section>
+<section id="pulls-srs-sample-mode-for-testing-full-mode-for-production." class="level1">
+<h1>2. Pulls SRs (sample mode for testing, full mode for production).</h1>
+</section>
+<section id="parses-the-sla-sla_days-string-column-into-numeric-hours-days." class="level1">
+<h1>3. Parses the SLA “sla_days” string column into numeric hours + days.</h1>
+</section>
+<section id="left-joins-sla-targets-onto-srs-at-the-most-granular-key-available." class="level1">
+<h1>4. Left-joins SLA targets onto SRs at the most granular key available.</h1>
+</section>
+<section id="computes-actual-resolution-time-and-sla-compliance-flags." class="level1">
+<h1>5. Computes actual resolution time and SLA compliance flags.</h1>
+</section>
+<section id="section-3" class="level1">
+<h1></h1>
+</section>
+<section id="before-you-run" class="level1">
+<h1>Before you run:</h1>
+</section>
+<section id="get-a-free-socrata-app-token-httpsdata.cityofnewyork.usprofileapp_tokens" class="level1">
+<h1>- Get a free Socrata app token: https://data.cityofnewyork.us/profile/app_tokens</h1>
+</section>
+<section id="set-as-an-env-var-socrata_app_token-or-paste-into-the-line-below." class="level1">
+<h1>- Set as an env var SOCRATA_APP_TOKEN, or paste into the line below.</h1>
+</section>
+<section id="section-4" class="level1">
+<h1>=============================================================================</h1>
+</section>
+<section id="packages" class="level1">
+<h1>—- 0. Packages ———————————————————–</h1>
+<p>pkgs &lt;- c(“RSocrata”, “dplyr”, “lubridate”, “stringr”, “tidyr”, “readr”, “httr”, “purrr”) to_install &lt;- pkgs[!pkgs %in% rownames(installed.packages())] if (length(to_install)) install.packages(to_install) invisible(lapply(pkgs, library, character.only = TRUE))</p>
+</section>
+<section id="config--" class="level1">
+<h1>—- 1. Config ————————————————————-</h1>
+<p>SOCRATA_APP_TOKEN &lt;- Sys.getenv(“SOCRATA_APP_TOKEN”, unset = “fY0DltbUaGfPenH6P7chzp1yf”)</p>
+<p>SR_ENDPOINT &lt;- “https://data.cityofnewyork.us/resource/erm2-nwe9.json” SLA_ENDPOINT &lt;- “https://data.cityofnewyork.us/resource/cs9t-e3x8.json”</p>
+<p>START_DATE &lt;- “2022-01-01T00:00:00.000” END_DATE &lt;- “2026-01-01T00:00:00.000” # exclusive upper bound = through 12/31/2025</p>
+</section>
+<section id="switch-this-to-false-when-youre-ready-to-pull-the-full-multi-million-row-sr-set." class="level1">
+<h1>Switch this to FALSE when you’re ready to pull the full multi-million-row SR set.</h1>
+<p>SAMPLE_ONLY &lt;- FALSE SAMPLE_LIMIT &lt;- 50000</p>
+</section>
+<section id="timeout-retry-tuning--" class="level1">
+<h1>—- Timeout / retry tuning ————————————————-</h1>
+</section>
+<section id="each-socrata-page-request-will-be-given-up-to-this-many-seconds-before-httr" class="level1">
+<h1>Each Socrata page request will be given up to this many seconds before httr</h1>
+</section>
+<section id="gives-up.-generous-ceiling-pages-normally-come-back-in-30s-but-can-stall" class="level1">
+<h1>gives up. Generous ceiling — pages normally come back in &lt; 30s but can stall</h1>
+</section>
+<section id="during-peak-hours.-youd-rather-wait-than-crash-mid-pull." class="level1">
+<h1>during peak hours. You’d rather wait than crash mid-pull.</h1>
+<p>HTTP_TIMEOUT_SEC &lt;- 600 # 10 minutes per page request MAX_RETRIES &lt;- 5 # retries per chunk on transient failures (503, timeout) RETRY_BACKOFF_SEC &lt;- 30 # initial backoff, doubles each retry</p>
+</section>
+<section id="chunk-the-full-year-pull-one-month-at-a-time-so-a-failure-at-month-23-doesnt" class="level1">
+<h1>Chunk the full-year pull one month at a time so a failure at month 23 doesn’t</h1>
+</section>
+<section id="cost-you-months-1-22.-set-false-if-you-want-a-single-monolithic-request." class="level1">
+<h1>cost you months 1-22. Set FALSE if you want a single monolithic request.</h1>
+<p>CHUNK_BY_MONTH &lt;- TRUE CACHE_DIR &lt;- “socrata_cache” dir.create(CACHE_DIR, showWarnings = FALSE)</p>
+</section>
+<section id="anchor-compliance-calculations-to-a-fixed-date-so-re-running-is-reproducible." class="level1">
+<h1>Anchor compliance calculations to a fixed date so re-running is reproducible.</h1>
+</section>
+<section id="tickets-still-open-as-of-this-date-that-have-already-exceeded-their-sla" class="level1">
+<h1>Tickets still open as of this date that have already exceeded their SLA</h1>
+</section>
+<section id="window-are-treated-as-failures-tickets-still-open-but-within-their-sla" class="level1">
+<h1>window are treated as failures; tickets still open but within their SLA</h1>
+</section>
+<section id="window-are-treated-as-not-yet-evaluable.-without-this-anchor-results-would" class="level1">
+<h1>window are treated as not-yet-evaluable. Without this anchor, results would</h1>
+</section>
+<section id="shift-slightly-every-time-the-script-runs." class="level1">
+<h1>shift slightly every time the script runs.</h1>
+<p>ANALYSIS_AS_OF &lt;- as.POSIXct(“2026-01-01 00:00:00”, tz = “UTC”)</p>
+</section>
+<section id="track-total-pipeline-runtime-for-methodology-reporting." class="level1">
+<h1>Track total pipeline runtime for methodology reporting.</h1>
+<p>PIPELINE_START &lt;- Sys.time() message(“Pipeline started:”, format(PIPELINE_START))</p>
+</section>
+<section id="helper-run-an-expression-with-a-generous-http-timeout-and-retries." class="level1">
+<h1>Helper: run an expression with a generous HTTP timeout and retries.</h1>
+<p>safe_socrata &lt;- function(url, token, label = url) { attempt &lt;- 0 repeat { attempt &lt;- attempt + 1 result &lt;- tryCatch( httr::with_config( config = httr::timeout(HTTP_TIMEOUT_SEC), read.socrata(url, app_token = token) ), error = function(e) e ) if (!inherits(result, “error”)) return(result) if (attempt &gt;= MAX_RETRIES) { stop(“Failed after”, MAX_RETRIES, ” attempts on “, label,”error: “, conditionMessage(result)) } wait &lt;- RETRY_BACKOFF_SEC * (2 ^ (attempt - 1)) message(” Attempt “, attempt,” failed (“, conditionMessage(result),”). Retrying in “, wait,”s…“) Sys.sleep(wait) } }</p>
+</section>
+<section id="pull-sla-lookup-full-table-its-tiny--" class="level1">
+<h1>—- 2. Pull SLA lookup (full table, it’s tiny) —————————-</h1>
+<p>sla_raw &lt;- safe_socrata(SLA_ENDPOINT, SOCRATA_APP_TOKEN, “SLA lookup”) message(“SLA rows pulled:”, nrow(sla_raw))</p>
+</section>
+<section id="parse-7-days-1-day-8-hours-12-hours-into-numeric-hours." class="level1">
+<h1>Parse “7 days” / “1 day” / “8 hours” / “12 hours” into numeric hours.</h1>
+</section>
+<section id="the-column-is-stored-as-a-string-this-is-the-single-most-important-cleaning-step." class="level1">
+<h1>The column is stored as a string — this is the single most important cleaning step.</h1>
+</section>
+<section id="some-rows-carry-the-literal-text-sla-not-managed-by-311-these-are-real" class="level1">
+<h1>Some rows carry the literal text “SLA Not Managed by 311” — these are real</h1>
+</section>
+<section id="rows-in-the-lookup-they-just-dont-have-a-measurable-target.-track-them" class="level1">
+<h1>rows in the lookup, they just don’t have a measurable target. Track them</h1>
+</section>
+<section id="as-their-own-category-so-they-dont-get-silently-mixed-with-unmatched-srs." class="level1">
+<h1>as their own category so they don’t get silently mixed with unmatched SRs.</h1>
+<p>sla &lt;- sla_raw %&gt;% mutate( sla_num = as.numeric(str_extract(sla_days, “\d+\.?\d<em>”)), sla_unit = str_to_lower(str_extract(sla_days, ”[a-zA-Z]+”)), sla_hours = case_when( sla_unit %in% c(”hour”, ”hours”) ~ sla_num, sla_unit %in% c(”day”, ”days”) ~ sla_num </em> 24, TRUE ~ NA_real_ ), sla_days_numeric = sla_hours / 24, sla_status = case_when( !is.na(sla_hours) ~”measurable”, str_detect(sla_days, regex(“not managed”, ignore_case = TRUE)) ~ “not_managed_by_311”, TRUE ~ “unparseable” ) ) %&gt;% # Normalize the optional details columns so joins behave predictably. mutate( problem_details = if_else(is.na(problem_details) | problem_details == ““,”N/A”, problem_details), additional_details = if_else(is.na(additional_details) | additional_details == ““,”N/A”, additional_details) )</p>
+</section>
+<section id="report-sla-row-health-distinguish-categories-clearly." class="level1">
+<h1>Report SLA row health — distinguish categories clearly.</h1>
+<p>cat(“— SLA lookup health —”) sla %&gt;% count(sla_status) %&gt;% print()</p>
+<p>unparseable &lt;- sla %&gt;% filter(sla_status == “unparseable”) if (nrow(unparseable) &gt; 0) { warning(“Truly unparseable sla_days values (not ‘Not Managed’):”, paste(unique(unparseable$sla_days), collapse = “,”)) }</p>
+</section>
+<section id="pull-service-requests" class="level1">
+<h1>—- 3. Pull Service Requests ———————————————</h1>
+</section>
+<section id="strategy" class="level1">
+<h1>Strategy:</h1>
+</section>
+<section id="sample_only-single-small-request-with-a-server-side-date-filter." class="level1">
+<h1>- SAMPLE_ONLY: single small request with a server-side date filter.</h1>
+</section>
+<section id="full-pull-chunk_by_month-iterate-month-by-month-cache-each-month-to" class="level1">
+<h1>- Full pull + CHUNK_BY_MONTH: iterate month-by-month, cache each month to</h1>
+</section>
+<section id="disk.-if-the-session-crashes-re-running-picks-up-from-the-last-saved" class="level1">
+<h1>disk. If the session crashes, re-running picks up from the last saved</h1>
+</section>
+<section id="month-rather-than-restarting-from-january-2022." class="level1">
+<h1>month rather than restarting from January 2022.</h1>
+</section>
+<section id="full-pull-chunk_by_month-one-big-paginated-request.-simpler-more" class="level1">
+<h1>- Full pull + !CHUNK_BY_MONTH: one big paginated request. Simpler, more</h1>
+</section>
+<section id="fragile-for-long-runs." class="level1">
+<h1>fragile for long runs.</h1>
+<p>build_where &lt;- function(start_iso, end_iso) { sprintf(“created_date &gt;= ‘%s’ AND created_date &lt; ‘%s’”, start_iso, end_iso) }</p>
+<p>build_url &lt;- function(where_clause, limit = NULL) { paste0( SR_ENDPOINT, “?<span class="math inline">\(where=", URLencode(where_clause, reserved = TRUE),
+    if (!is.null(limit)) paste0("&amp;\)</span>limit=”, limit) else “” ) }</p>
+<p>if (SAMPLE_ONLY) { sr_url &lt;- build_url(build_where(START_DATE, END_DATE), limit = SAMPLE_LIMIT) message(“Pulling SR sample from:”, sr_url) sr_raw &lt;- safe_socrata(sr_url, SOCRATA_APP_TOKEN, “SR sample”)</p>
+<p>} else if (CHUNK_BY_MONTH) { month_starts &lt;- seq(as.Date(“2022-01-01”), as.Date(“2025-12-01”), by = “1 month”) sr_chunks &lt;- vector(“list”, length(month_starts))</p>
+<p>for (i in seq_along(month_starts)) { m_start &lt;- month_starts[i] m_end &lt;- seq(m_start, by = “1 month”, length.out = 2)[2] tag &lt;- format(m_start, “%Y-%m”) cache_file &lt;- file.path(CACHE_DIR, paste0(“sr_”, tag, “.rds”))</p>
+<pre><code>if (file.exists(cache_file)) {
+  message("[", i, "/", length(month_starts), "] ", tag, " — cached, skipping")
+  sr_chunks[[i]] &lt;- readRDS(cache_file)
+  next
+}
+
+url &lt;- build_url(build_where(
+  format(m_start, "%Y-%m-%dT00:00:00.000"),
+  format(m_end,   "%Y-%m-%dT00:00:00.000")
+))
+message("[", i, "/", length(month_starts), "] ", tag, " — pulling...")
+t0 &lt;- Sys.time()
+chunk &lt;- safe_socrata(url, SOCRATA_APP_TOKEN, paste("SR chunk", tag))
+message("    ", nrow(chunk), " rows in ",
+        round(as.numeric(difftime(Sys.time(), t0, units = "secs")), 1), "s")
+saveRDS(chunk, cache_file)
+sr_chunks[[i]] &lt;- chunk</code></pre>
+<p>} sr_raw &lt;- bind_rows(sr_chunks)</p>
+<p>} else { sr_url &lt;- build_url(build_where(START_DATE, END_DATE)) message(“Pulling full SR range in one shot (this may take a long time):”, sr_url) sr_raw &lt;- safe_socrata(sr_url, SOCRATA_APP_TOKEN, “full SR pull”) }</p>
+<p>message(“SR rows pulled:”, nrow(sr_raw))</p>
+</section>
+<section id="prep-srs-for-join" class="level1">
+<h1>—- 4. Prep SRs for join ————————————————–</h1>
+<p>sr &lt;- sr_raw %&gt;% mutate( created_date = ymd_hms(created_date, quiet = TRUE), closed_date = ymd_hms(closed_date, quiet = TRUE), # Match the SLA “N/A” convention so joins work. descriptor = if_else(is.na(descriptor) | descriptor == ““,”N/A”, descriptor), descriptor_2 = if_else(is.na(descriptor_2) | descriptor_2 == ““,”N/A”, descriptor_2) )</p>
+</section>
+<section id="join-sla-onto-srs" class="level1">
+<h1>—- 5. Join SLA onto SRs ————————————————–</h1>
+</section>
+<section id="strategy-try-the-most-granular-match-4-keys-fall-back-to-3-keys." class="level1">
+<h1>Strategy: try the most granular match (4 keys), fall back to 3 keys.</h1>
+</section>
+<section id="using-agency_name-on-the-sr-side-because-sr.agency-is-an-abbreviation-and" class="level1">
+<h1>Using agency_name on the SR side because SR.agency is an abbreviation and</h1>
+</section>
+<section id="sla.agency-is-the-full-name." class="level1">
+<h1>SLA.agency is the full name.</h1>
+<p>join4 &lt;- sr %&gt;% inner_join( sla %&gt;% select(agency, problem, problem_details, additional_details, sla_days, sla_hours, sla_days_numeric, sla_status), by = c(“agency_name” = “agency”, “complaint_type” = “problem”, “descriptor” = “problem_details”, “descriptor_2” = “additional_details”) ) %&gt;% mutate(sla_match_level = “agency+type+desc+addl”)</p>
+<p>matched_ids &lt;- join4$unique_key</p>
+</section>
+<section id="rows-that-didnt-match-on-4-keys-try-3." class="level1">
+<h1>Rows that didn’t match on 4 keys — try 3.</h1>
+<p>join3 &lt;- sr %&gt;% filter(!unique_key %in% matched_ids) %&gt;% inner_join( sla %&gt;% select(agency, problem, problem_details, sla_days, sla_hours, sla_days_numeric, sla_status) %&gt;% distinct(agency, problem, problem_details, .keep_all = TRUE), by = c(“agency_name” = “agency”, “complaint_type” = “problem”, “descriptor” = “problem_details”) ) %&gt;% mutate(sla_match_level = “agency+type+desc”)</p>
+<p>matched_ids &lt;- c(matched_ids, join3$unique_key)</p>
+</section>
+<section id="unmatched-rows-keep-them-but-with-na-sla-so-you-can-report-coverage." class="level1">
+<h1>Unmatched rows — keep them but with NA SLA so you can report coverage.</h1>
+<p>unmatched &lt;- sr %&gt;% filter(!unique_key %in% matched_ids) %&gt;% mutate(sla_days = NA_character_, sla_hours = NA_real_, sla_days_numeric = NA_real_, sla_status = “no_match”, sla_match_level = “unmatched”)</p>
+<p>sr_with_sla &lt;- bind_rows(join4, join3, unmatched)</p>
+</section>
+<section id="compute-compliance-metrics--" class="level1">
+<h1>—- 6. Compute compliance metrics —————————————-</h1>
+</section>
+<section id="met_sla-semantics" class="level1">
+<h1>met_sla semantics:</h1>
+</section>
+<section id="true-closed-within-sla" class="level1">
+<h1>TRUE = closed within SLA</h1>
+</section>
+<section id="false-closed-past-sla-or-still-open-and-already-past-sla-as-of-analysis_as_of" class="level1">
+<h1>FALSE = closed past SLA, OR still open and already past SLA as of ANALYSIS_AS_OF</h1>
+</section>
+<section id="na-cannot-be-evaluated-still-open-and-within-sla-window" class="level1">
+<h1>NA = cannot be evaluated (still open and within SLA window,</h1>
+</section>
+<section id="or-no-matched-sla-or-sla-is-not-managed-by-311" class="level1">
+<h1>or no matched SLA, or SLA is “not managed by 311”)</h1>
+<p>sr_with_sla &lt;- sr_with_sla %&gt;% mutate( resolution_hours = as.numeric(difftime(closed_date, created_date, units = “hours”)), met_sla = case_when( sla_status %in% c(“not_managed_by_311”, “no_match”, “unparseable”) ~ NA, is.na(sla_hours) ~ NA, is.na(closed_date) &amp; (as.numeric(difftime(ANALYSIS_AS_OF, created_date, units = “hours”)) &gt; sla_hours) ~ FALSE, is.na(closed_date) ~ NA, resolution_hours &lt;= sla_hours ~ TRUE, TRUE ~ FALSE ) )</p>
+</section>
+<section id="quick-summaries--" class="level1">
+<h1>—- 7. Quick summaries —————————————————-</h1>
+<p>cat(“— SR-level SLA coverage —”) sr_with_sla %&gt;% count(sla_status, sla_match_level) %&gt;% arrange(desc(n)) %&gt;% print()</p>
+<p>cat(“— SLA compliance by agency (top 15 by measurable volume) —”) sr_with_sla %&gt;% filter(sla_status == “measurable”, !is.na(met_sla)) %&gt;% group_by(agency_name) %&gt;% summarise( n_srs = n(), pct_met = mean(met_sla, na.rm = TRUE), .groups = “drop” ) %&gt;% arrange(desc(n_srs)) %&gt;% slice_head(n = 15) %&gt;% print()</p>
+</section>
+<section id="save-for-downstream-work" class="level1">
+<h1>—- 8. Save for downstream work ——————————————</h1>
+<p>saveRDS(sr_with_sla, “sr_with_sla.rds”) write_csv(sla, “sla_lookup_parsed.csv”) message(“Done. Saved sr_with_sla.rds and sla_lookup_parsed.csv.”)</p>
+<p>PIPELINE_END &lt;- Sys.time() message(“Pipeline finished:”, format(PIPELINE_END)) message(“Total runtime:”, format(round(difftime(PIPELINE_END, PIPELINE_START, units = “auto”), 1)))</p>
+</section>
+<section id="section-5" class="level1">
+<h1>=============================================================================</h1>
+</section>
+<section id="nyc-311-sla-compliance-chunked-join-memory-safe" class="level1">
+<h1>NYC 311 SLA Compliance — Chunked Join (Memory-Safe)</h1>
+</section>
+<section id="section-6" class="level1">
+<h1></h1>
+</section>
+<section id="reads-each-cached-monthly-sr-file-from-socrata_cache-prepares-it-joins" class="level1">
+<h1>Reads each cached monthly SR file from socrata_cache/, prepares it, joins</h1>
+</section>
+<section id="it-against-the-sla-lookup-computes-compliance-flags-and-writes-the" class="level1">
+<h1>it against the SLA lookup, computes compliance flags, and writes the</h1>
+</section>
+<section id="per-month-result-to-processed_cache.-at-the-end-concatenates-the-small" class="level1">
+<h1>per-month result to processed_cache/. At the end, concatenates the small</h1>
+</section>
+<section id="per-month-outputs-into-the-final-sr_with_sla.rds." class="level1">
+<h1>per-month outputs into the final sr_with_sla.rds.</h1>
+</section>
+<section id="section-7" class="level1">
+<h1></h1>
+</section>
+<section id="why-chunked-the-full-data-version-of-the-prep-join-holds-multiple-copies" class="level1">
+<h1>Why chunked: the full-data version of the prep + join holds multiple copies</h1>
+</section>
+<section id="of-13.5m-rows-in-memory-simultaneously-and-crashes-on-a-16-gb-mac.-processing" class="level1">
+<h1>of 13.5M rows in memory simultaneously and crashes on a 16 GB Mac. Processing</h1>
+</section>
+<section id="month-by-month-keeps-peak-memory-under-5-gb." class="level1">
+<h1>month-by-month keeps peak memory under 5 GB.</h1>
+</section>
+<section id="section-8" class="level1">
+<h1></h1>
+</section>
+<section id="run-after-the-data-has-been-cached-by-nyc311_sla_pull.r." class="level1">
+<h1>Run after the data has been cached by nyc311_sla_pull.R.</h1>
+</section>
+<section id="section-9" class="level1">
+<h1>=============================================================================</h1>
+</section>
+<section id="packages--" class="level1">
+<h1>—- 0. Packages —-</h1>
+<p>library(dplyr) library(lubridate) library(stringr) library(tidyr) library(readr)</p>
+</section>
+<section id="config---1" class="level1">
+<h1>—- 1. Config —-</h1>
+<p>CACHE_DIR_RAW &lt;- “socrata_cache” CACHE_DIR_PROCESSED &lt;- “processed_cache” dir.create(CACHE_DIR_PROCESSED, showWarnings = FALSE)</p>
+<p>ANALYSIS_AS_OF &lt;- as.POSIXct(“2026-01-01 00:00:00”, tz = “UTC”)</p>
+<p>PIPELINE_START &lt;- Sys.time() message(“Chunked join started:”, format(PIPELINE_START))</p>
+</section>
+<section id="load-and-prep-the-sla-lookup-same-as-original-script--" class="level1">
+<h1>—- 2. Load and prep the SLA lookup (same as original script) —-</h1>
+<p>sla &lt;- read_csv(“sla_lookup_parsed.csv”, show_col_types = FALSE) %&gt;% mutate( problem_details = if_else(is.na(problem_details) | problem_details == ““,”N/A”, problem_details), additional_details = if_else(is.na(additional_details) | additional_details == ““,”N/A”, additional_details) )</p>
+<p>message(“SLA rows loaded:”, nrow(sla))</p>
+</section>
+<section id="process-each-cached-monthly-file--" class="level1">
+<h1>—- 3. Process each cached monthly file —-</h1>
+<p>raw_files &lt;- list.files(CACHE_DIR_RAW, pattern = “^sr_\d{4}-\d{2}\.rds$”, full.names = TRUE) raw_files &lt;- sort(raw_files) message(“Found”, length(raw_files), ” monthly cache files”)</p>
+<p>process_month &lt;- function(raw_path) { tag &lt;- str_extract(basename(raw_path), “\d{4}-\d{2}”) out_path &lt;- file.path(CACHE_DIR_PROCESSED, paste0(“sr_with_sla_”, tag, “.rds”))</p>
+<p>if (file.exists(out_path)) { message(“[”, tag, ”] processed file exists — skipping”) return(invisible(NULL)) }</p>
+<p>t0 &lt;- Sys.time() message(“[”, tag, ”] reading raw…”) sr_raw &lt;- readRDS(raw_path)</p>
+<p># Prep sr &lt;- sr_raw %&gt;% mutate( created_date = ymd_hms(created_date, quiet = TRUE), closed_date = ymd_hms(closed_date, quiet = TRUE), descriptor = if_else(is.na(descriptor) | descriptor == ““,”N/A”, descriptor), descriptor_2 = if_else(is.na(descriptor_2) | descriptor_2 == ““,”N/A”, descriptor_2) ) rm(sr_raw); gc(verbose = FALSE)</p>
+<p># 4-key join join4 &lt;- sr %&gt;% inner_join( sla %&gt;% select(agency, problem, problem_details, additional_details, sla_days, sla_hours, sla_days_numeric, sla_status), by = c(“agency_name” = “agency”, “complaint_type” = “problem”, “descriptor” = “problem_details”, “descriptor_2” = “additional_details”) ) %&gt;% mutate(sla_match_level = “agency+type+desc+addl”)</p>
+<p>matched_ids &lt;- join4$unique_key</p>
+<p># 3-key fallback join3 &lt;- sr %&gt;% filter(!unique_key %in% matched_ids) %&gt;% inner_join( sla %&gt;% select(agency, problem, problem_details, sla_days, sla_hours, sla_days_numeric, sla_status) %&gt;% distinct(agency, problem, problem_details, .keep_all = TRUE), by = c(“agency_name” = “agency”, “complaint_type” = “problem”, “descriptor” = “problem_details”) ) %&gt;% mutate(sla_match_level = “agency+type+desc”)</p>
+<p>matched_ids &lt;- c(matched_ids, join3$unique_key)</p>
+<p># Unmatched unmatched &lt;- sr %&gt;% filter(!unique_key %in% matched_ids) %&gt;% mutate(sla_days = NA_character_, sla_hours = NA_real_, sla_days_numeric = NA_real_, sla_status = “no_match”, sla_match_level = “unmatched”)</p>
+<p>rm(sr); gc(verbose = FALSE)</p>
+<p>sr_with_sla_month &lt;- bind_rows(join4, join3, unmatched) rm(join4, join3, unmatched); gc(verbose = FALSE)</p>
+<p># Compliance metrics sr_with_sla_month &lt;- sr_with_sla_month %&gt;% mutate( resolution_hours = as.numeric(difftime(closed_date, created_date, units = “hours”)), met_sla = case_when( sla_status %in% c(“not_managed_by_311”, “no_match”, “unparseable”) ~ NA, is.na(sla_hours) ~ NA, is.na(closed_date) &amp; (as.numeric(difftime(ANALYSIS_AS_OF, created_date, units = “hours”)) &gt; sla_hours) ~ FALSE, is.na(closed_date) ~ NA, resolution_hours &lt;= sla_hours ~ TRUE, TRUE ~ FALSE ) )</p>
+<p>saveRDS(sr_with_sla_month, out_path) elapsed &lt;- round(as.numeric(difftime(Sys.time(), t0, units = “secs”)), 1) message(“[”, tag, ”] processed”, nrow(sr_with_sla_month), ” rows in “, elapsed,”s”)</p>
+<p>rm(sr_with_sla_month); gc(verbose = FALSE) invisible(NULL) }</p>
+<p>for (f in raw_files) { process_month(f) }</p>
+</section>
+<section id="concatenate-per-month-outputs--" class="level1">
+<h1>—- 4. Concatenate per-month outputs —-</h1>
+<p>message(“Concatenating processed monthly files…”) processed_files &lt;- list.files(CACHE_DIR_PROCESSED, pattern = “^sr_with_sla_\d{4}-\d{2}\.rds$”, full.names = TRUE) processed_files &lt;- sort(processed_files)</p>
+</section>
+<section id="use-a-list-and-bind_rows-once-at-the-end.-this-is-the-only-step-that-needs" class="level1">
+<h1>Use a list and bind_rows once at the end. This is the only step that needs</h1>
+</section>
+<section id="all-data-in-memory-simultaneously-but-no-intermediate-copies-are-made." class="level1">
+<h1>all data in memory simultaneously, but no intermediate copies are made.</h1>
+<p>sr_with_sla_list &lt;- lapply(processed_files, readRDS) sr_with_sla &lt;- bind_rows(sr_with_sla_list) rm(sr_with_sla_list); gc(verbose = FALSE)</p>
+<p>message(“Final row count:”, nrow(sr_with_sla))</p>
+</section>
+<section id="quick-summaries---1" class="level1">
+<h1>—- 5. Quick summaries —-</h1>
+<p>cat(“— SR-level SLA coverage —”) sr_with_sla %&gt;% count(sla_status, sla_match_level) %&gt;% arrange(desc(n)) %&gt;% print()</p>
+<p>cat(“— SLA compliance by agency (top 15 by measurable volume) —”) sr_with_sla %&gt;% filter(sla_status == “measurable”, !is.na(met_sla)) %&gt;% group_by(agency_name) %&gt;% summarise( n_srs = n(), pct_met = mean(met_sla, na.rm = TRUE), .groups = “drop” ) %&gt;% arrange(desc(n_srs)) %&gt;% slice_head(n = 15) %&gt;% print()</p>
+</section>
+<section id="save-final-output--" class="level1">
+<h1>—- 6. Save final output —-</h1>
+<p>saveRDS(sr_with_sla, “sr_with_sla.rds”) message(“Done. Saved sr_with_sla.rds”)</p>
+<p>PIPELINE_END &lt;- Sys.time() message(“Chunked join finished:”, format(PIPELINE_END)) message(“Total runtime:”, format(round(difftime(PIPELINE_END, PIPELINE_START, units = “auto”), 1)))</p>
+<p>Final visual:</p>
+</section>
+<section id="section-10" class="level1">
+<h1>=============================================================================</h1>
+</section>
+<section id="nyc-311-sla-compliance-visualization-1-alternative-diverging-bar" class="level1">
+<h1>NYC 311 SLA Compliance — Visualization 1 (alternative): Diverging Bar</h1>
+</section>
+<section id="section-11" class="level1">
+<h1></h1>
+</section>
+<section id="each-agencys-bar-shows-log2actual-median-resolution-sla-target." class="level1">
+<h1>Each agency’s bar shows log2(actual median resolution / SLA target).</h1>
+</section>
+<section id="bars-to-the-left-of-center-0-beating-sla-bars-to-the-right-missing-sla." class="level1">
+<h1>Bars to the left of center (0) = beating SLA; bars to the right = missing SLA.</h1>
+</section>
+<section id="y-axis-labels-include-both-the-absolute-sla-and-compliance-." class="level1">
+<h1>Y-axis labels include both the absolute SLA and compliance %.</h1>
+</section>
+<section id="section-12" class="level1">
+<h1></h1>
+</section>
+<section id="saves-to-a-different-filename-so-the-lollipop-version-stays-as-a-backup." class="level1">
+<h1>Saves to a different filename so the lollipop version stays as a backup.</h1>
+</section>
+<section id="section-13" class="level1">
+<h1>=============================================================================</h1>
+<p>library(dplyr) library(ggplot2) library(scales) library(stringr) library(readr)</p>
+<p>if (!exists(“sr_with_sla”)) { sr_with_sla &lt;- readRDS(“sr_with_sla.rds”) }</p>
+<p>dir.create(“figures”, showWarnings = FALSE) dir.create(“tables”, showWarnings = FALSE)</p>
+</section>
+<section id="compute-summary--" class="level1">
+<h1>—- Compute summary —-</h1>
+<p>agency_summary &lt;- sr_with_sla %&gt;% filter(sla_status == “measurable”, !is.na(sla_hours), sla_hours &gt; 0) %&gt;% group_by(agency_name) %&gt;% summarise( n_total = n(), n_closed = sum(!is.na(resolution_hours) &amp; resolution_hours &gt;= 0), median_resolution_hrs = median(resolution_hours[!is.na(resolution_hours) &amp; resolution_hours &gt;= 0]), median_sla_hrs = median(sla_hours), ratio = median_resolution_hrs / median_sla_hrs, log2_ratio = log2(ratio), compliance_all = mean(met_sla, na.rm = TRUE), .groups = “drop” ) %&gt;% filter(n_total &gt;= 1000) %&gt;% arrange(ratio)</p>
+</section>
+<section id="format-the-absolute-sla-target-into-something-readable." class="level1">
+<h1>Format the absolute SLA target into something readable.</h1>
+</section>
+<section id="hours-stays-8-hr-24-hours-becomes-1-day-168-becomes-1-wk-etc." class="level1">
+<h1>8 hours stays “8 hr”; 24 hours becomes “1 day”; 168 becomes “1 wk”, etc.</h1>
+<p>format_sla &lt;- function(hrs) { case_when( hrs &lt; 24 ~ paste0(round(hrs), ” hr”), hrs &lt; 24 * 7 ~ paste0(round(hrs / 24), ” day”), hrs &lt; 24 * 30 ~ paste0(round(hrs / (24 * 7)), ” wk”), hrs &lt; 24 * 365 ~ paste0(round(hrs / (24 * 30)), ” mo”), TRUE ~ paste0(round(hrs / (24 * 365), 1), ” yr”) ) }</p>
+<p>agency_summary &lt;- agency_summary %&gt;% mutate( short_name = case_when( agency_name == “New York City Police Department” ~ “NYPD”, agency_name == “Department of Sanitation” ~ “DSNY”, agency_name == “Department of Parks and Recreation” ~ “DPR”, agency_name == “Department of Transportation” ~ “DOT”, agency_name == “Department of Health and Mental Hygiene” ~ “DOHMH”, agency_name == “Economic Development Corporation” ~ “EDC”, agency_name == “Taxi and Limousine Commission” ~ “TLC”, agency_name == “Department of Consumer and Worker Protection” ~ “DCWP”, agency_name == “Department of Homeless Services” ~ “DHS”, agency_name == “Department of Housing Preservation and Development” ~ “HPD”, agency_name == “Department of Education” ~ “DOE”, agency_name == “Department of Environmental Protection” ~ “DEP”, TRUE ~ agency_name ), classification = case_when( short_name %in% c(“NYPD”, “DOHMH”, “EDC”, “HPD”) ~ “Measurement issues”, compliance_all &gt;= 0.60 ~ “Meets SLA reliably”, TRUE ~ “Systematically misses” ), sla_label = format_sla(median_sla_hrs), y_label = sprintf(“%s (%s SLA, %.0f%% compliant)”, short_name, sla_label, compliance_all * 100), y_label = factor(y_label, levels = rev(y_label)) )</p>
+<p>write_csv(agency_summary, “tables/tbl1_agency_summary.csv”)</p>
+</section>
+<section id="build-figure--" class="level1">
+<h1>—- Build figure —-</h1>
+<p>group_colors &lt;- c( “Meets SLA reliably” = “#1f4e79”, “Systematically misses” = “#c0392b”, “Measurement issues” = “#7f7f7f” )</p>
+</section>
+<section id="log2-ratio-breaks-each-unit-on-the-x-axis-doublinghalving-of-ratio." class="level1">
+<h1>log2 ratio breaks: each unit on the x-axis = doubling/halving of ratio.</h1>
+<p>x_breaks &lt;- c(-3, -2, -1, 0, 1, 2, 3) x_labels &lt;- c(“8x fasterSLA”, “4x faster”, “2x faster”, “Matches”, “2x slower”, “4x slower”, “8x slowerSLA”)</p>
+<p>p1 &lt;- ggplot(agency_summary, aes(y = y_label, x = log2_ratio, fill = classification)) + # Reference lines for ½×, 2×, 4× to give visual scale anchors geom_vline(xintercept = c(-2, -1, 1, 2), color = “#eeeeee”, linewidth = 0.5) + # The bar itself geom_col(width = 0.7, alpha = 0.92) + # Center line (matches SLA) geom_vline(xintercept = 0, color = “#222222”, linewidth = 0.6) + scale_x_continuous( breaks = x_breaks, labels = x_labels, expand = expansion(mult = c(0.05, 0.05)) ) + scale_fill_manual(values = group_colors, name = NULL) + guides( fill = guide_legend( override.aes = list(alpha = 0.92) ) ) + labs( title = “Agency Resolution Times Compared to SLA Commitments”, subtitle = “Each bar shows the gap between actual median resolution time and the published SLA, on a doubling scale.”, x = NULL, y = NULL, caption = paste0( “Jan 2022 - Dec 2025; n =”, format(sum(agency_summary$n_total), big.mark = “,”), ” service requests with measurable SLA. “,”Source: NYC OpenData (erm2-nwe9, cs9t-e3x8).” ) ) + theme_minimal(base_size = 11) + theme( plot.title = element_text(face = “bold”, size = 14, margin = margin(b = 4)), plot.subtitle = element_text(color = “#444444”, size = 10, margin = margin(b = 14)), plot.caption = element_text(color = “#777777”, size = 8, hjust = 0, margin = margin(t = 12)), legend.position = “top”, legend.justification = “left”, legend.margin = margin(b = 10), panel.grid.minor = element_blank(), panel.grid.major.y = element_blank(), panel.grid.major.x = element_blank(), axis.text.y = element_text(size = 10, hjust = 1), axis.text.x = element_text(size = 9, color = “#555555”, lineheight = 0.85), plot.margin = margin(14, 14, 14, 14) )</p>
+<p>ggsave(“figures/fig1_agency_diverging_bars.png”, p1, width = 11, height = 6, dpi = 300, bg = “white”) ggsave(“figures/fig1_agency_diverging_bars.pdf”, p1, width = 11, height = 6)</p>
+<p>message(“Saved figures/fig1_agency_diverging_bars.{png,pdf}”) print(p1)</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/mclycke\.github\.io\/STA9750-2026-SPRING\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

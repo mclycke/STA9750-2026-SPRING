@@ -1,0 +1,697 @@
+library(dplyr)
+
+agency_ratio <- sr_with_sla %>%
+  filter(sla_status == "measurable",
+         !is.na(sla_hours),
+         sla_hours > 0) %>%
+  group_by(agency) %>%
+  summarise(
+    n_total           = n(),
+    n_closed          = sum(!is.na(resolution_hours) & resolution_hours >= 0),
+    pct_closed        = n_closed / n_total,
+    median_resolution_hrs = median(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0]),
+    median_sla_hrs    = median(sla_hours),
+    ratio             = median_resolution_hrs / median_sla_hrs,
+    # Compliance among CLOSED tickets only
+    compliance_closed = mean(met_sla[!is.na(resolution_hours) & resolution_hours >= 0], na.rm = TRUE),
+    # Compliance counting open-and-overdue as failures
+    compliance_all    = mean(met_sla, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  filter(n_total >= 100) %>%
+  arrange(ratio)
+
+print(agency_ratio, n = Inf)
+
+flagged <- agency_ratio %>%
+  filter(ratio < 0.25 | compliance_closed == 0 | compliance_closed >= 0.98 |
+           compliance_all == 0)
+
+cat("\n--- Flagged agencies ---\n")
+print(flagged, n = Inf)
+
+
+target_agency <- "NYPD"
+
+agency_breakdown <- sr_with_sla %>%
+  filter(sla_status == "measurable",
+         agency == target_agency,
+         !is.na(sla_hours),
+         sla_hours > 0) %>%
+  group_by(complaint_type) %>%
+  summarise(
+    n_total           = n(),
+    n_closed          = sum(!is.na(resolution_hours) & resolution_hours >= 0),
+    pct_closed        = n_closed / n_total,
+    median_resolution_hrs = median(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0]),
+    p25_resolution_hrs    = quantile(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0], 0.25, na.rm = TRUE),
+    p75_resolution_hrs    = quantile(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0], 0.75, na.rm = TRUE),
+    median_sla_hrs    = median(sla_hours),
+    ratio             = median_resolution_hrs / median_sla_hrs,
+    compliance_closed = mean(met_sla[!is.na(resolution_hours) & resolution_hours >= 0], na.rm = TRUE),
+    compliance_all    = mean(met_sla, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  filter(n_total >= 30) %>%
+  arrange(ratio)
+
+print(agency_breakdown, n = Inf)
+
+
+
+
+
+# =============================================================================
+# NYC 311 SLA Compliance Analysis — Data Pull & Join Scaffold
+# Window: Jan 1, 2022 through Dec 31, 2025
+#
+# Datasets:
+#   - 311 Service Requests from 2020 to Present  (erm2-nwe9)
+#   - 311 Service Level Agreements               (cs9t-e3x8)
+#
+# What this script does:
+#   1. Pulls the full SLA lookup table (small — ~1,500 rows).
+#   2. Pulls SRs (sample mode for testing, full mode for production).
+#   3. Parses the SLA "sla_days" string column into numeric hours + days.
+#   4. Left-joins SLA targets onto SRs at the most granular key available.
+#   5. Computes actual resolution time and SLA compliance flags.
+#
+# Before you run:
+#   - Get a free Socrata app token: https://data.cityofnewyork.us/profile/app_tokens
+#   - Set as an env var SOCRATA_APP_TOKEN, or paste into the line below.
+# =============================================================================
+
+
+# ---- 0. Packages -----------------------------------------------------------
+pkgs <- c("RSocrata", "dplyr", "lubridate", "stringr", "tidyr", "readr", "httr", "purrr")
+to_install <- pkgs[!pkgs %in% rownames(installed.packages())]
+if (length(to_install)) install.packages(to_install)
+invisible(lapply(pkgs, library, character.only = TRUE))
+
+# ---- 1. Config -------------------------------------------------------------
+SOCRATA_APP_TOKEN <- Sys.getenv("SOCRATA_APP_TOKEN", unset = "fY0DltbUaGfPenH6P7chzp1yf")
+
+SR_ENDPOINT  <- "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
+SLA_ENDPOINT <- "https://data.cityofnewyork.us/resource/cs9t-e3x8.json"
+
+START_DATE <- "2022-01-01T00:00:00.000"
+END_DATE   <- "2026-01-01T00:00:00.000"  # exclusive upper bound = through 12/31/2025
+
+# Switch this to FALSE when you're ready to pull the full multi-million-row SR set.
+SAMPLE_ONLY <- FALSE
+SAMPLE_LIMIT <- 50000
+
+# ---- Timeout / retry tuning -------------------------------------------------
+# Each Socrata page request will be given up to this many seconds before httr
+# gives up. Generous ceiling — pages normally come back in < 30s but can stall
+# during peak hours. You'd rather wait than crash mid-pull.
+HTTP_TIMEOUT_SEC <- 600      # 10 minutes per page request
+MAX_RETRIES      <- 5        # retries per chunk on transient failures (503, timeout)
+RETRY_BACKOFF_SEC <- 30      # initial backoff, doubles each retry
+
+# Chunk the full-year pull one month at a time so a failure at month 23 doesn't
+# cost you months 1-22. Set FALSE if you want a single monolithic request.
+CHUNK_BY_MONTH <- TRUE
+CACHE_DIR      <- "socrata_cache"
+dir.create(CACHE_DIR, showWarnings = FALSE)
+
+# Anchor compliance calculations to a fixed date so re-running is reproducible.
+# Tickets still open as of this date that have already exceeded their SLA
+# window are treated as failures; tickets still open but within their SLA
+# window are treated as not-yet-evaluable. Without this anchor, results would
+# shift slightly every time the script runs.
+ANALYSIS_AS_OF <- as.POSIXct("2026-01-01 00:00:00", tz = "UTC")
+
+# Track total pipeline runtime for methodology reporting.
+PIPELINE_START <- Sys.time()
+message("Pipeline started: ", format(PIPELINE_START))
+
+# Helper: run an expression with a generous HTTP timeout and retries.
+safe_socrata <- function(url, token, label = url) {
+  attempt <- 0
+  repeat {
+    attempt <- attempt + 1
+    result <- tryCatch(
+      httr::with_config(
+        config = httr::timeout(HTTP_TIMEOUT_SEC),
+        read.socrata(url, app_token = token)
+      ),
+      error = function(e) e
+    )
+    if (!inherits(result, "error")) return(result)
+    if (attempt >= MAX_RETRIES) {
+      stop("Failed after ", MAX_RETRIES, " attempts on ", label,
+           "\nLast error: ", conditionMessage(result))
+    }
+    wait <- RETRY_BACKOFF_SEC * (2 ^ (attempt - 1))
+    message("  Attempt ", attempt, " failed (", conditionMessage(result),
+            "). Retrying in ", wait, "s...")
+    Sys.sleep(wait)
+  }
+}
+
+# ---- 2. Pull SLA lookup (full table, it's tiny) ----------------------------
+sla_raw <- safe_socrata(SLA_ENDPOINT, SOCRATA_APP_TOKEN, "SLA lookup")
+message("SLA rows pulled: ", nrow(sla_raw))
+
+# Parse "7 days" / "1 day" / "8 hours" / "12 hours" into numeric hours.
+# The column is stored as a string — this is the single most important cleaning step.
+# Some rows carry the literal text "SLA Not Managed by 311" — these are real
+# rows in the lookup, they just don't have a measurable target. Track them
+# as their own category so they don't get silently mixed with unmatched SRs.
+sla <- sla_raw %>%
+  mutate(
+    sla_num  = as.numeric(str_extract(sla_days, "\\d+\\.?\\d*")),
+    sla_unit = str_to_lower(str_extract(sla_days, "[a-zA-Z]+")),
+    sla_hours = case_when(
+      sla_unit %in% c("hour", "hours") ~ sla_num,
+      sla_unit %in% c("day",  "days")  ~ sla_num * 24,
+      TRUE                             ~ NA_real_
+    ),
+    sla_days_numeric = sla_hours / 24,
+    sla_status = case_when(
+      !is.na(sla_hours)                                    ~ "measurable",
+      str_detect(sla_days, regex("not managed", ignore_case = TRUE)) ~ "not_managed_by_311",
+      TRUE                                                 ~ "unparseable"
+    )
+  ) %>%
+  # Normalize the optional details columns so joins behave predictably.
+  mutate(
+    problem_details    = if_else(is.na(problem_details)    | problem_details    == "", "N/A", problem_details),
+    additional_details = if_else(is.na(additional_details) | additional_details == "", "N/A", additional_details)
+  )
+
+# Report SLA row health — distinguish categories clearly.
+cat("\n--- SLA lookup health ---\n")
+sla %>% count(sla_status) %>% print()
+
+unparseable <- sla %>% filter(sla_status == "unparseable")
+if (nrow(unparseable) > 0) {
+  warning("Truly unparseable sla_days values (not 'Not Managed'):\n",
+          paste(unique(unparseable$sla_days), collapse = ", "))
+}
+
+# ---- 3. Pull Service Requests ---------------------------------------------
+# Strategy:
+#   - SAMPLE_ONLY: single small request with a server-side date filter.
+#   - Full pull + CHUNK_BY_MONTH: iterate month-by-month, cache each month to
+#     disk. If the session crashes, re-running picks up from the last saved
+#     month rather than restarting from January 2022.
+#   - Full pull + !CHUNK_BY_MONTH: one big paginated request. Simpler, more
+#     fragile for long runs.
+
+build_where <- function(start_iso, end_iso) {
+  sprintf("created_date >= '%s' AND created_date < '%s'", start_iso, end_iso)
+}
+
+build_url <- function(where_clause, limit = NULL) {
+  paste0(
+    SR_ENDPOINT,
+    "?$where=", URLencode(where_clause, reserved = TRUE),
+    if (!is.null(limit)) paste0("&$limit=", limit) else ""
+  )
+}
+
+if (SAMPLE_ONLY) {
+  sr_url <- build_url(build_where(START_DATE, END_DATE), limit = SAMPLE_LIMIT)
+  message("Pulling SR sample from:\n  ", sr_url)
+  sr_raw <- safe_socrata(sr_url, SOCRATA_APP_TOKEN, "SR sample")
+  
+} else if (CHUNK_BY_MONTH) {
+  month_starts <- seq(as.Date("2022-01-01"), as.Date("2025-12-01"), by = "1 month")
+  sr_chunks <- vector("list", length(month_starts))
+  
+  for (i in seq_along(month_starts)) {
+    m_start <- month_starts[i]
+    m_end   <- seq(m_start, by = "1 month", length.out = 2)[2]
+    tag     <- format(m_start, "%Y-%m")
+    cache_file <- file.path(CACHE_DIR, paste0("sr_", tag, ".rds"))
+    
+    if (file.exists(cache_file)) {
+      message("[", i, "/", length(month_starts), "] ", tag, " — cached, skipping")
+      sr_chunks[[i]] <- readRDS(cache_file)
+      next
+    }
+    
+    url <- build_url(build_where(
+      format(m_start, "%Y-%m-%dT00:00:00.000"),
+      format(m_end,   "%Y-%m-%dT00:00:00.000")
+    ))
+    message("[", i, "/", length(month_starts), "] ", tag, " — pulling...")
+    t0 <- Sys.time()
+    chunk <- safe_socrata(url, SOCRATA_APP_TOKEN, paste("SR chunk", tag))
+    message("    ", nrow(chunk), " rows in ",
+            round(as.numeric(difftime(Sys.time(), t0, units = "secs")), 1), "s")
+    saveRDS(chunk, cache_file)
+    sr_chunks[[i]] <- chunk
+  }
+  sr_raw <- bind_rows(sr_chunks)
+  
+} else {
+  sr_url <- build_url(build_where(START_DATE, END_DATE))
+  message("Pulling full SR range in one shot (this may take a long time):\n  ", sr_url)
+  sr_raw <- safe_socrata(sr_url, SOCRATA_APP_TOKEN, "full SR pull")
+}
+
+message("SR rows pulled: ", nrow(sr_raw))
+
+# ---- 4. Prep SRs for join --------------------------------------------------
+sr <- sr_raw %>%
+  mutate(
+    created_date = ymd_hms(created_date, quiet = TRUE),
+    closed_date  = ymd_hms(closed_date,  quiet = TRUE),
+    # Match the SLA "N/A" convention so joins work.
+    descriptor   = if_else(is.na(descriptor)   | descriptor   == "", "N/A", descriptor),
+    descriptor_2 = if_else(is.na(descriptor_2) | descriptor_2 == "", "N/A", descriptor_2)
+  )
+
+# ---- 5. Join SLA onto SRs --------------------------------------------------
+# Strategy: try the most granular match (4 keys), fall back to 3 keys.
+# Using agency_name on the SR side because SR.agency is an abbreviation and
+# SLA.agency is the full name.
+
+join4 <- sr %>%
+  inner_join(
+    sla %>% select(agency, problem, problem_details, additional_details,
+                   sla_days, sla_hours, sla_days_numeric, sla_status),
+    by = c("agency_name" = "agency",
+           "complaint_type" = "problem",
+           "descriptor" = "problem_details",
+           "descriptor_2" = "additional_details")
+  ) %>% mutate(sla_match_level = "agency+type+desc+addl")
+
+matched_ids <- join4$unique_key
+
+# Rows that didn't match on 4 keys — try 3.
+join3 <- sr %>%
+  filter(!unique_key %in% matched_ids) %>%
+  inner_join(
+    sla %>%
+      select(agency, problem, problem_details, sla_days, sla_hours, sla_days_numeric, sla_status) %>%
+      distinct(agency, problem, problem_details, .keep_all = TRUE),
+    by = c("agency_name" = "agency",
+           "complaint_type" = "problem",
+           "descriptor" = "problem_details")
+  ) %>% mutate(sla_match_level = "agency+type+desc")
+
+matched_ids <- c(matched_ids, join3$unique_key)
+
+# Unmatched rows — keep them but with NA SLA so you can report coverage.
+unmatched <- sr %>%
+  filter(!unique_key %in% matched_ids) %>%
+  mutate(sla_days = NA_character_,
+         sla_hours = NA_real_,
+         sla_days_numeric = NA_real_,
+         sla_status = "no_match",
+         sla_match_level = "unmatched")
+
+sr_with_sla <- bind_rows(join4, join3, unmatched)
+
+# ---- 6. Compute compliance metrics ----------------------------------------
+# met_sla semantics:
+#   TRUE       = closed within SLA
+#   FALSE      = closed past SLA, OR still open and already past SLA as of ANALYSIS_AS_OF
+#   NA         = cannot be evaluated (still open and within SLA window,
+#                or no matched SLA, or SLA is "not managed by 311")
+sr_with_sla <- sr_with_sla %>%
+  mutate(
+    resolution_hours = as.numeric(difftime(closed_date, created_date, units = "hours")),
+    met_sla = case_when(
+      sla_status %in% c("not_managed_by_311", "no_match", "unparseable") ~ NA,
+      is.na(sla_hours) ~ NA,
+      is.na(closed_date) & (as.numeric(difftime(ANALYSIS_AS_OF, created_date, units = "hours")) > sla_hours) ~ FALSE,
+      is.na(closed_date) ~ NA,
+      resolution_hours <= sla_hours ~ TRUE,
+      TRUE ~ FALSE
+    )
+  )
+
+# ---- 7. Quick summaries ----------------------------------------------------
+cat("\n--- SR-level SLA coverage ---\n")
+sr_with_sla %>%
+  count(sla_status, sla_match_level) %>%
+  arrange(desc(n)) %>%
+  print()
+
+cat("\n--- SLA compliance by agency (top 15 by measurable volume) ---\n")
+sr_with_sla %>%
+  filter(sla_status == "measurable", !is.na(met_sla)) %>%
+  group_by(agency_name) %>%
+  summarise(
+    n_srs   = n(),
+    pct_met = mean(met_sla, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(n_srs)) %>%
+  slice_head(n = 15) %>%
+  print()
+
+# ---- 8. Save for downstream work ------------------------------------------
+saveRDS(sr_with_sla, "sr_with_sla.rds")
+write_csv(sla, "sla_lookup_parsed.csv")
+message("Done. Saved sr_with_sla.rds and sla_lookup_parsed.csv.")
+
+PIPELINE_END <- Sys.time()
+message("Pipeline finished: ", format(PIPELINE_END))
+message("Total runtime: ", format(round(difftime(PIPELINE_END, PIPELINE_START, units = "auto"), 1)))
+
+
+
+# =============================================================================
+# NYC 311 SLA Compliance — Chunked Join (Memory-Safe)
+#
+# Reads each cached monthly SR file from socrata_cache/, prepares it, joins
+# it against the SLA lookup, computes compliance flags, and writes the
+# per-month result to processed_cache/. At the end, concatenates the small
+# per-month outputs into the final sr_with_sla.rds.
+#
+# Why chunked: the full-data version of the prep + join holds multiple copies
+# of 13.5M rows in memory simultaneously and crashes on a 16 GB Mac. Processing
+# month-by-month keeps peak memory under 5 GB.
+#
+# Run after the data has been cached by nyc311_sla_pull.R.
+# =============================================================================
+
+# ---- 0. Packages ----
+library(dplyr)
+library(lubridate)
+library(stringr)
+library(tidyr)
+library(readr)
+
+# ---- 1. Config ----
+CACHE_DIR_RAW       <- "socrata_cache"
+CACHE_DIR_PROCESSED <- "processed_cache"
+dir.create(CACHE_DIR_PROCESSED, showWarnings = FALSE)
+
+ANALYSIS_AS_OF <- as.POSIXct("2026-01-01 00:00:00", tz = "UTC")
+
+PIPELINE_START <- Sys.time()
+message("Chunked join started: ", format(PIPELINE_START))
+
+# ---- 2. Load and prep the SLA lookup (same as original script) ----
+sla <- read_csv("sla_lookup_parsed.csv", show_col_types = FALSE) %>%
+  mutate(
+    problem_details    = if_else(is.na(problem_details)    | problem_details    == "", "N/A", problem_details),
+    additional_details = if_else(is.na(additional_details) | additional_details == "", "N/A", additional_details)
+  )
+
+message("SLA rows loaded: ", nrow(sla))
+
+# ---- 3. Process each cached monthly file ----
+raw_files <- list.files(CACHE_DIR_RAW, pattern = "^sr_\\d{4}-\\d{2}\\.rds$", full.names = TRUE)
+raw_files <- sort(raw_files)
+message("Found ", length(raw_files), " monthly cache files")
+
+process_month <- function(raw_path) {
+  tag <- str_extract(basename(raw_path), "\\d{4}-\\d{2}")
+  out_path <- file.path(CACHE_DIR_PROCESSED, paste0("sr_with_sla_", tag, ".rds"))
+  
+  if (file.exists(out_path)) {
+    message("[", tag, "] processed file exists — skipping")
+    return(invisible(NULL))
+  }
+  
+  t0 <- Sys.time()
+  message("[", tag, "] reading raw...")
+  sr_raw <- readRDS(raw_path)
+  
+  # Prep
+  sr <- sr_raw %>%
+    mutate(
+      created_date = ymd_hms(created_date, quiet = TRUE),
+      closed_date  = ymd_hms(closed_date,  quiet = TRUE),
+      descriptor   = if_else(is.na(descriptor)   | descriptor   == "", "N/A", descriptor),
+      descriptor_2 = if_else(is.na(descriptor_2) | descriptor_2 == "", "N/A", descriptor_2)
+    )
+  rm(sr_raw); gc(verbose = FALSE)
+  
+  # 4-key join
+  join4 <- sr %>%
+    inner_join(
+      sla %>% select(agency, problem, problem_details, additional_details,
+                     sla_days, sla_hours, sla_days_numeric, sla_status),
+      by = c("agency_name" = "agency",
+             "complaint_type" = "problem",
+             "descriptor" = "problem_details",
+             "descriptor_2" = "additional_details")
+    ) %>% mutate(sla_match_level = "agency+type+desc+addl")
+  
+  matched_ids <- join4$unique_key
+  
+  # 3-key fallback
+  join3 <- sr %>%
+    filter(!unique_key %in% matched_ids) %>%
+    inner_join(
+      sla %>%
+        select(agency, problem, problem_details, sla_days, sla_hours, sla_days_numeric, sla_status) %>%
+        distinct(agency, problem, problem_details, .keep_all = TRUE),
+      by = c("agency_name" = "agency",
+             "complaint_type" = "problem",
+             "descriptor" = "problem_details")
+    ) %>% mutate(sla_match_level = "agency+type+desc")
+  
+  matched_ids <- c(matched_ids, join3$unique_key)
+  
+  # Unmatched
+  unmatched <- sr %>%
+    filter(!unique_key %in% matched_ids) %>%
+    mutate(sla_days = NA_character_,
+           sla_hours = NA_real_,
+           sla_days_numeric = NA_real_,
+           sla_status = "no_match",
+           sla_match_level = "unmatched")
+  
+  rm(sr); gc(verbose = FALSE)
+  
+  sr_with_sla_month <- bind_rows(join4, join3, unmatched)
+  rm(join4, join3, unmatched); gc(verbose = FALSE)
+  
+  # Compliance metrics
+  sr_with_sla_month <- sr_with_sla_month %>%
+    mutate(
+      resolution_hours = as.numeric(difftime(closed_date, created_date, units = "hours")),
+      met_sla = case_when(
+        sla_status %in% c("not_managed_by_311", "no_match", "unparseable") ~ NA,
+        is.na(sla_hours) ~ NA,
+        is.na(closed_date) & (as.numeric(difftime(ANALYSIS_AS_OF, created_date, units = "hours")) > sla_hours) ~ FALSE,
+        is.na(closed_date) ~ NA,
+        resolution_hours <= sla_hours ~ TRUE,
+        TRUE ~ FALSE
+      )
+    )
+  
+  saveRDS(sr_with_sla_month, out_path)
+  elapsed <- round(as.numeric(difftime(Sys.time(), t0, units = "secs")), 1)
+  message("[", tag, "] processed ", nrow(sr_with_sla_month), " rows in ", elapsed, "s")
+  
+  rm(sr_with_sla_month); gc(verbose = FALSE)
+  invisible(NULL)
+}
+
+for (f in raw_files) {
+  process_month(f)
+}
+
+# ---- 4. Concatenate per-month outputs ----
+message("Concatenating processed monthly files...")
+processed_files <- list.files(CACHE_DIR_PROCESSED, pattern = "^sr_with_sla_\\d{4}-\\d{2}\\.rds$", full.names = TRUE)
+processed_files <- sort(processed_files)
+
+# Use a list and bind_rows once at the end. This is the only step that needs
+# all data in memory simultaneously, but no intermediate copies are made.
+sr_with_sla_list <- lapply(processed_files, readRDS)
+sr_with_sla <- bind_rows(sr_with_sla_list)
+rm(sr_with_sla_list); gc(verbose = FALSE)
+
+message("Final row count: ", nrow(sr_with_sla))
+
+# ---- 5. Quick summaries ----
+cat("\n--- SR-level SLA coverage ---\n")
+sr_with_sla %>%
+  count(sla_status, sla_match_level) %>%
+  arrange(desc(n)) %>%
+  print()
+
+cat("\n--- SLA compliance by agency (top 15 by measurable volume) ---\n")
+sr_with_sla %>%
+  filter(sla_status == "measurable", !is.na(met_sla)) %>%
+  group_by(agency_name) %>%
+  summarise(
+    n_srs   = n(),
+    pct_met = mean(met_sla, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  arrange(desc(n_srs)) %>%
+  slice_head(n = 15) %>%
+  print()
+
+# ---- 6. Save final output ----
+saveRDS(sr_with_sla, "sr_with_sla.rds")
+message("Done. Saved sr_with_sla.rds")
+
+PIPELINE_END <- Sys.time()
+message("Chunked join finished: ", format(PIPELINE_END))
+message("Total runtime: ", format(round(difftime(PIPELINE_END, PIPELINE_START, units = "auto"), 1)))
+
+
+
+
+
+Final visual:
+
+# =============================================================================
+# NYC 311 SLA Compliance — Visualization 1 (alternative): Diverging Bar
+#
+# Each agency's bar shows log2(actual median resolution / SLA target).
+# Bars to the left of center (0) = beating SLA; bars to the right = missing SLA.
+# Y-axis labels include both the absolute SLA and compliance %.
+#
+# Saves to a different filename so the lollipop version stays as a backup.
+# =============================================================================
+
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(stringr)
+library(readr)
+
+if (!exists("sr_with_sla")) {
+  sr_with_sla <- readRDS("sr_with_sla.rds")
+}
+
+dir.create("figures", showWarnings = FALSE)
+dir.create("tables",  showWarnings = FALSE)
+
+# ---- Compute summary ----
+agency_summary <- sr_with_sla %>%
+  filter(sla_status == "measurable",
+         !is.na(sla_hours), sla_hours > 0) %>%
+  group_by(agency_name) %>%
+  summarise(
+    n_total = n(),
+    n_closed = sum(!is.na(resolution_hours) & resolution_hours >= 0),
+    median_resolution_hrs = median(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0]),
+    median_sla_hrs = median(sla_hours),
+    ratio = median_resolution_hrs / median_sla_hrs,
+    log2_ratio = log2(ratio),
+    compliance_all = mean(met_sla, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  filter(n_total >= 1000) %>%
+  arrange(ratio)
+
+# Format the absolute SLA target into something readable.
+# 8 hours stays "8 hr"; 24 hours becomes "1 day"; 168 becomes "1 wk", etc.
+format_sla <- function(hrs) {
+  case_when(
+    hrs < 24                ~ paste0(round(hrs), " hr"),
+    hrs < 24 * 7            ~ paste0(round(hrs / 24), " day"),
+    hrs < 24 * 30           ~ paste0(round(hrs / (24 * 7)), " wk"),
+    hrs < 24 * 365          ~ paste0(round(hrs / (24 * 30)), " mo"),
+    TRUE                    ~ paste0(round(hrs / (24 * 365), 1), " yr")
+  )
+}
+
+agency_summary <- agency_summary %>%
+  mutate(
+    short_name = case_when(
+      agency_name == "New York City Police Department"                    ~ "NYPD",
+      agency_name == "Department of Sanitation"                            ~ "DSNY",
+      agency_name == "Department of Parks and Recreation"                  ~ "DPR",
+      agency_name == "Department of Transportation"                        ~ "DOT",
+      agency_name == "Department of Health and Mental Hygiene"             ~ "DOHMH",
+      agency_name == "Economic Development Corporation"                    ~ "EDC",
+      agency_name == "Taxi and Limousine Commission"                       ~ "TLC",
+      agency_name == "Department of Consumer and Worker Protection"        ~ "DCWP",
+      agency_name == "Department of Homeless Services"                     ~ "DHS",
+      agency_name == "Department of Housing Preservation and Development"  ~ "HPD",
+      agency_name == "Department of Education"                             ~ "DOE",
+      agency_name == "Department of Environmental Protection"              ~ "DEP",
+      TRUE ~ agency_name
+    ),
+    classification = case_when(
+      short_name %in% c("NYPD", "DOHMH", "EDC", "HPD")    ~ "Measurement issues",
+      compliance_all >= 0.60                              ~ "Meets SLA reliably",
+      TRUE                                                ~ "Systematically misses"
+    ),
+    sla_label = format_sla(median_sla_hrs),
+    y_label = sprintf("%s  (%s SLA, %.0f%% compliant)",
+                      short_name, sla_label, compliance_all * 100),
+    y_label = factor(y_label, levels = rev(y_label))
+  )
+
+write_csv(agency_summary, "tables/tbl1_agency_summary.csv")
+
+# ---- Build figure ----
+group_colors <- c(
+  "Meets SLA reliably"     = "#1f4e79",
+  "Systematically misses"  = "#c0392b",
+  "Measurement issues"     = "#7f7f7f"
+)
+
+# log2 ratio breaks: each unit on the x-axis = doubling/halving of ratio.
+x_breaks <- c(-3, -2, -1, 0, 1, 2, 3)
+x_labels <- c("8x faster\nthan SLA", "4x faster", "2x faster",
+              "Matches\nSLA",
+              "2x slower", "4x slower", "8x slower\nthan SLA")
+
+p1 <- ggplot(agency_summary, aes(y = y_label, x = log2_ratio,
+                                 fill = classification)) +
+  # Reference lines for ½×, 2×, 4× to give visual scale anchors
+  geom_vline(xintercept = c(-2, -1, 1, 2), color = "#eeeeee", linewidth = 0.5) +
+  # The bar itself
+  geom_col(width = 0.7, alpha = 0.92) +
+  # Center line (matches SLA)
+  geom_vline(xintercept = 0, color = "#222222", linewidth = 0.6) +
+  scale_x_continuous(
+    breaks = x_breaks,
+    labels = x_labels,
+    expand = expansion(mult = c(0.05, 0.05))
+  ) +
+  scale_fill_manual(values = group_colors, name = NULL) +
+  guides(
+    fill = guide_legend(
+      override.aes = list(alpha = 0.92)
+    )
+  ) +
+  labs(
+    title = "Agency Resolution Times Compared to SLA Commitments",
+    subtitle = "Each bar shows the gap between actual median resolution time and the published SLA, on a doubling scale.",
+    x = NULL,
+    y = NULL,
+    caption = paste0(
+      "Jan 2022 - Dec 2025; n = ",
+      format(sum(agency_summary$n_total), big.mark = ","),
+      " service requests with measurable SLA. ",
+      "Source: NYC OpenData (erm2-nwe9, cs9t-e3x8)."
+    )
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title = element_text(face = "bold", size = 14,
+                              margin = margin(b = 4)),
+    plot.subtitle = element_text(color = "#444444", size = 10,
+                                 margin = margin(b = 14)),
+    plot.caption = element_text(color = "#777777", size = 8,
+                                hjust = 0,
+                                margin = margin(t = 12)),
+    legend.position = "top",
+    legend.justification = "left",
+    legend.margin = margin(b = 10),
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.text.y = element_text(size = 10, hjust = 1),
+    axis.text.x = element_text(size = 9, color = "#555555",
+                               lineheight = 0.85),
+    plot.margin = margin(14, 14, 14, 14)
+  )
+
+ggsave("figures/fig1_agency_diverging_bars.png", p1,
+       width = 11, height = 6, dpi = 300, bg = "white")
+ggsave("figures/fig1_agency_diverging_bars.pdf", p1,
+       width = 11, height = 6)
+
+message("Saved figures/fig1_agency_diverging_bars.{png,pdf}")
+print(p1)
