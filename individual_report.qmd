@@ -1,0 +1,870 @@
+---
+title: "NYC 311 Service Level Agreement Compliance"
+subtitle: "An Agency-Level Analysis of Resolution Times Against Published Targets, January 2022 – December 2025"
+author: "Mary Lycke"
+date: today
+date-format: long
+abstract: |
+  This report examines whether New York City agencies resolve 311 requests in accordance with their published Service Level Agreements (SLAs). Analyzing 13.5 million service requests submitted between January 2022 and December 2025, the analysis joins each request to its
+  agency-specific SLA target and compares actual median resolution time against
+  that target. Results identify three operational regimes among NYC agencies:
+  agencies that reliably meet their published commitments, agencies that
+  systematically miss them, and agencies whose data exhibit measurement
+  irregularities that prevent meaningful evaluation. Findings are intended to
+  evaluate whether there is segmented prioritization of issues.
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    code-fold: true
+    code-tools: true
+    code-summary: "Show code"
+    code-overflow: wrap
+    theme: cosmo
+    fig-cap-location: bottom
+    tbl-cap-location: top
+    fig-width: 10
+    fig-height: 6
+    embed-resources: true
+    smooth-scroll: true
+execute:
+  echo: true
+  warning: false
+  message: false
+
+---
+
+```{r setup}
+#| include: false
+
+knitr::opts_chunk$set(
+  echo      = TRUE,
+  warning   = FALSE,
+  message   = FALSE,
+  fig.align = "center",
+  out.width = "100%"
+)
+options(dplyr.summarise.inform = FALSE)
+```
+
+
+# Overall Question and Specific Question
+
+## Overall Question (OQ)
+
+**What factors drive 311 service request response and resolution times, and do they suggest segmented prioritization of issues?**
+
+> *311 receives roughly 3-4 million requests per year across dozens of New York City agencies. If you've ever submitted a request yourself, you may be aware that whether or not your issue is resolved is hit or miss. Can we use 311 data to determine if some areas or issues are systematically underserved?*
+
+## Specific Question (SQ)
+
+**How do resolution times vary between city agencies compared to Service Level Agreements?**
+
+> *A straightforward way to understand how NYC agencies are performing with address 311 issues is to evaluate agency-level standards and how 311 request resolution times compare to those standards.*
+
+---
+
+# Data and Methods
+
+This analysis joins two datasets published by NYC Open Data via the Socrata API: the 311 Service Requests dataset (`erm2-nwe9`, ~13.5 million rows over the analysis window) and the 311 Service Level Agreements lookup table (`cs9t-e3x8`, ~1,500 rows). The pipeline is split across three stages: data acquisition, chunked join with compliance calculation, and downstream analysis.
+
+> *Data aquisition pulls the dataset in monthly chunks via the Socrata API, caching each month to disk to avoid a failed connection mid-pull impacting already stored data. The SLA dataset is small enough to pull in a single call. After this, the sla_days column is parsed into numeric hours and each row is tagged as either measurable, not_managed_by_311 or unparseable to preserve the distinction between SLA categories city agencies have mapped to how 311 fields data requests. The chunked join then processes each cached month independently, matching service requests to SLAs on a four-key join for agency, complaint type, descriptior, and secondary descriptor. It then falls back to a three-key join for rows that fail the most granular match, retaining unmatched rows tagged no_match so coverage gaps can be quantified rather than discarded. Compliance is anchored to a fixed reference date, January 1, 2026, so that re-runs produce identifical results, and tickets still open past their SLA are counted as failures rather than dropped from the denominator. Processing month by month keeps peak memory under five gigabytes despite the 13.5 million service requests. Per month outputs are concatenated at the end to produce the joined dataset used for all downstream analysis.*
+
+## Stage 1 — Data Acquisition
+
+The code below pulls service requests and the SLA lookup from the Socrata API. It chunks the SR pull one month at a time, caches each month to disk, and retries with exponential backoff on transient failures. The full pull takes 3–5 hours; the chunk-and-cache design means a mid-pipeline failure resumes from the last successful month rather than restarting from January 2022. This chunk is shown for methodology but does not re-execute at render time.
+
+```{r data-pull}
+#| eval: false
+#| label: data-pull
+
+# ---- 0. Packages ----
+pkgs <- c("RSocrata", "dplyr", "lubridate", "stringr", "tidyr", "readr", "httr", "purrr")
+to_install <- pkgs[!pkgs %in% rownames(installed.packages())]
+if (length(to_install)) install.packages(to_install)
+invisible(lapply(pkgs, library, character.only = TRUE))
+
+# ---- 1. Config ----
+SOCRATA_APP_TOKEN <- Sys.getenv("SOCRATA_APP_TOKEN", unset = "fY0DltbUaGfPenH6P7chzp1yf")
+SR_ENDPOINT  <- "https://data.cityofnewyork.us/resource/erm2-nwe9.json"
+SLA_ENDPOINT <- "https://data.cityofnewyork.us/resource/cs9t-e3x8.json"
+START_DATE <- "2022-01-01T00:00:00.000"
+END_DATE   <- "2026-01-01T00:00:00.000"
+SAMPLE_ONLY <- FALSE
+SAMPLE_LIMIT <- 50000
+
+HTTP_TIMEOUT_SEC <- 600
+MAX_RETRIES <- 5
+RETRY_BACKOFF_SEC <- 30
+CHUNK_BY_MONTH <- TRUE
+CACHE_DIR <- "socrata_cache"
+dir.create(CACHE_DIR, showWarnings = FALSE)
+ANALYSIS_AS_OF <- as.POSIXct("2026-01-01 00:00:00", tz = "UTC")
+
+# Resilient Socrata wrapper with retries and exponential backoff
+safe_socrata <- function(url, token, label = url) {
+  attempt <- 0
+  repeat {
+    attempt <- attempt + 1
+    result <- tryCatch(
+      httr::with_config(
+        config = httr::timeout(HTTP_TIMEOUT_SEC),
+        read.socrata(url, app_token = token)
+      ),
+      error = function(e) e
+    )
+    if (!inherits(result, "error")) return(result)
+    if (attempt >= MAX_RETRIES) {
+      stop("Failed after ", MAX_RETRIES, " attempts on ", label,
+           "\nLast error: ", conditionMessage(result))
+    }
+    wait <- RETRY_BACKOFF_SEC * (2 ^ (attempt - 1))
+    message("  Attempt ", attempt, " failed. Retrying in ", wait, "s...")
+    Sys.sleep(wait)
+  }
+}
+
+# ---- 2. Pull and parse SLA lookup ----
+sla_raw <- safe_socrata(SLA_ENDPOINT, SOCRATA_APP_TOKEN, "SLA lookup")
+
+sla <- sla_raw %>%
+  mutate(
+    sla_num  = as.numeric(str_extract(sla_days, "\\d+\\.?\\d*")),
+    sla_unit = str_to_lower(str_extract(sla_days, "[a-zA-Z]+")),
+    sla_hours = case_when(
+      sla_unit %in% c("hour", "hours") ~ sla_num,
+      sla_unit %in% c("day",  "days")  ~ sla_num * 24,
+      TRUE                             ~ NA_real_
+    ),
+    sla_days_numeric = sla_hours / 24,
+    sla_status = case_when(
+      !is.na(sla_hours) ~ "measurable",
+      str_detect(sla_days, regex("not managed", ignore_case = TRUE)) ~ "not_managed_by_311",
+      TRUE ~ "unparseable"
+    ),
+    problem_details    = if_else(is.na(problem_details)    | problem_details    == "", "N/A", problem_details),
+    additional_details = if_else(is.na(additional_details) | additional_details == "", "N/A", additional_details)
+  )
+
+# ---- 3. Pull Service Requests (chunked by month with disk caching) ----
+build_where <- function(start_iso, end_iso) {
+  sprintf("created_date >= '%s' AND created_date < '%s'", start_iso, end_iso)
+}
+build_url <- function(where_clause, limit = NULL) {
+  paste0(SR_ENDPOINT, "?$where=", URLencode(where_clause, reserved = TRUE),
+         if (!is.null(limit)) paste0("&$limit=", limit) else "")
+}
+
+if (SAMPLE_ONLY) {
+  sr_url <- build_url(build_where(START_DATE, END_DATE), limit = SAMPLE_LIMIT)
+  sr_raw <- safe_socrata(sr_url, SOCRATA_APP_TOKEN, "SR sample")
+} else if (CHUNK_BY_MONTH) {
+  month_starts <- seq(as.Date("2022-01-01"), as.Date("2025-12-01"), by = "1 month")
+  sr_chunks <- vector("list", length(month_starts))
+  for (i in seq_along(month_starts)) {
+    m_start <- month_starts[i]
+    m_end   <- seq(m_start, by = "1 month", length.out = 2)[2]
+    tag     <- format(m_start, "%Y-%m")
+    cache_file <- file.path(CACHE_DIR, paste0("sr_", tag, ".rds"))
+    if (file.exists(cache_file)) {
+      sr_chunks[[i]] <- readRDS(cache_file)
+      next
+    }
+    url <- build_url(build_where(
+      format(m_start, "%Y-%m-%dT00:00:00.000"),
+      format(m_end,   "%Y-%m-%dT00:00:00.000")
+    ))
+    chunk <- safe_socrata(url, SOCRATA_APP_TOKEN, paste("SR chunk", tag))
+    saveRDS(chunk, cache_file)
+    sr_chunks[[i]] <- chunk
+  }
+  sr_raw <- bind_rows(sr_chunks)
+} else {
+  sr_url <- build_url(build_where(START_DATE, END_DATE))
+  sr_raw <- safe_socrata(sr_url, SOCRATA_APP_TOKEN, "full SR pull")
+}
+
+write_csv(sla, "sla_lookup_parsed.csv")
+```
+
+## Stage 2 — Chunked Join and Compliance Calculation
+
+The join is performed month-by-month to keep peak memory below 5 GB on a 16 GB workstation; the full-data version of the prep + join would hold multiple copies of 13.5M rows in memory simultaneously and crash. The join uses a tiered key strategy: a 4-key match on agency, complaint type, descriptor, and additional descriptor for the most granular fit, then a 3-key fallback for SRs whose 4-key combination has no SLA entry, then an unmatched bucket kept in the dataset with `NA` SLA values so coverage can be reported transparently. The `met_sla` flag distinguishes closed-within-SLA, closed-past-SLA, open-and-already-overdue, and not-yet-evaluable cases.
+
+```{r chunked-join}
+#| eval: false
+#| label: chunked-join
+
+library(dplyr); library(lubridate); library(stringr); library(tidyr); library(readr)
+
+CACHE_DIR_RAW <- "socrata_cache"
+CACHE_DIR_PROCESSED <- "processed_cache"
+dir.create(CACHE_DIR_PROCESSED, showWarnings = FALSE)
+ANALYSIS_AS_OF <- as.POSIXct("2026-01-01 00:00:00", tz = "UTC")
+
+sla <- read_csv("sla_lookup_parsed.csv", show_col_types = FALSE) %>%
+  mutate(
+    problem_details    = if_else(is.na(problem_details)    | problem_details    == "", "N/A", problem_details),
+    additional_details = if_else(is.na(additional_details) | additional_details == "", "N/A", additional_details)
+  )
+
+raw_files <- list.files(CACHE_DIR_RAW, pattern = "^sr_\\d{4}-\\d{2}\\.rds$", full.names = TRUE)
+raw_files <- sort(raw_files)
+
+process_month <- function(raw_path) {
+  tag <- str_extract(basename(raw_path), "\\d{4}-\\d{2}")
+  out_path <- file.path(CACHE_DIR_PROCESSED, paste0("sr_with_sla_", tag, ".rds"))
+  if (file.exists(out_path)) return(invisible(NULL))
+
+  sr_raw <- readRDS(raw_path)
+  sr <- sr_raw %>%
+    mutate(
+      created_date = ymd_hms(created_date, quiet = TRUE),
+      closed_date  = ymd_hms(closed_date,  quiet = TRUE),
+      descriptor   = if_else(is.na(descriptor)   | descriptor   == "", "N/A", descriptor),
+      descriptor_2 = if_else(is.na(descriptor_2) | descriptor_2 == "", "N/A", descriptor_2)
+    )
+  rm(sr_raw); gc(verbose = FALSE)
+
+  # 4-key match (most granular)
+  join4 <- sr %>%
+    inner_join(
+      sla %>% select(agency, problem, problem_details, additional_details,
+                     sla_days, sla_hours, sla_days_numeric, sla_status),
+      by = c("agency_name" = "agency",
+             "complaint_type" = "problem",
+             "descriptor" = "problem_details",
+             "descriptor_2" = "additional_details")
+    ) %>% mutate(sla_match_level = "agency+type+desc+addl")
+
+  matched_ids <- join4$unique_key
+
+  # 3-key fallback
+  join3 <- sr %>%
+    filter(!unique_key %in% matched_ids) %>%
+    inner_join(
+      sla %>%
+        select(agency, problem, problem_details, sla_days, sla_hours, sla_days_numeric, sla_status) %>%
+        distinct(agency, problem, problem_details, .keep_all = TRUE),
+      by = c("agency_name" = "agency",
+             "complaint_type" = "problem",
+             "descriptor" = "problem_details")
+    ) %>% mutate(sla_match_level = "agency+type+desc")
+
+  matched_ids <- c(matched_ids, join3$unique_key)
+
+  unmatched <- sr %>%
+    filter(!unique_key %in% matched_ids) %>%
+    mutate(sla_days = NA_character_, sla_hours = NA_real_,
+           sla_days_numeric = NA_real_, sla_status = "no_match",
+           sla_match_level = "unmatched")
+
+  rm(sr); gc(verbose = FALSE)
+
+  sr_with_sla_month <- bind_rows(join4, join3, unmatched)
+  rm(join4, join3, unmatched); gc(verbose = FALSE)
+
+  # Compliance metric
+  sr_with_sla_month <- sr_with_sla_month %>%
+    mutate(
+      resolution_hours = as.numeric(difftime(closed_date, created_date, units = "hours")),
+      met_sla = case_when(
+        sla_status %in% c("not_managed_by_311", "no_match", "unparseable") ~ NA,
+        is.na(sla_hours) ~ NA,
+        is.na(closed_date) & (as.numeric(difftime(ANALYSIS_AS_OF, created_date, units = "hours")) > sla_hours) ~ FALSE,
+        is.na(closed_date) ~ NA,
+        resolution_hours <= sla_hours ~ TRUE,
+        TRUE ~ FALSE
+      )
+    )
+
+  saveRDS(sr_with_sla_month, out_path)
+  rm(sr_with_sla_month); gc(verbose = FALSE)
+  invisible(NULL)
+}
+
+for (f in raw_files) process_month(f)
+
+# Concatenate per-month outputs into final dataset
+processed_files <- list.files(CACHE_DIR_PROCESSED,
+                              pattern = "^sr_with_sla_\\d{4}-\\d{2}\\.rds$",
+                              full.names = TRUE) %>% sort()
+sr_with_sla <- lapply(processed_files, readRDS) %>% bind_rows()
+saveRDS(sr_with_sla, "sr_with_sla.rds")
+```
+
+## Stage 3 — Loading the Joined Dataset
+
+This chunk loads the joined dataset produced by Stages 1 and 2. The rendering session reads it from disk; everything downstream operates on the in-memory `sr_with_sla` object.
+
+```{r load-data}
+#| label: load-data
+
+library(dplyr)
+library(ggplot2)
+library(scales)
+library(stringr)
+library(knitr)
+library(kableExtra)
+library(here)
+
+# sr_with_sla.rds is included in the project submission.
+# Stages 1 and 2 (eval: false) document the original pull
+# but do not re-execute at render time.
+sr_with_sla <- readRDS("sr_with_sla.rds")
+```
+
+## Data Quality and Coverage
+
+> *Of 13.5 million service requests in the analysis window, 8.4 million (62%) joined to a measurable SLA target. The 5.0 million unmatched rows are not evenly distributed: roughly 90% fall in complaint types with no published SLA at all, dominated by HPD habitability complaints (heat/hot water, unsanitary conditions, plumbing) and DHS shelter intake, while the remaining 10% reflect taxonomy mismatches between agency intake codes and SLA category names. The coverage gap is therefore a structural feature of the SLA framework rather than a join failure, and it is not random with respect to agency or complaint severity. Among the rows that do join cleanly, exploratory analysis surfaced additional irregularities in how compliance is recorded; those patterns are examined in the following section.*
+
+```{r coverage}
+#| label: tbl-coverage
+#| tbl-cap: "SLA Match Coverage Across All Service Requests, 2022–2025"
+
+sr_with_sla %>%
+  count(sla_status, sla_match_level, name = "n_requests") %>%
+  arrange(desc(n_requests)) %>%
+  mutate(pct = scales::percent(n_requests / sum(n_requests), accuracy = 0.1)) %>%
+  kable(
+    col.names = c("SLA Status", "Match Level", "Requests", "% of Total"),
+    format.args = list(big.mark = ",")
+  ) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE, position = "left")
+```
+
+---
+
+# Exploratory Data Analysis
+
+> *Initial data exploration began with an SLA coverage check. Across the 13.5 million service requests in the analysis, only 8.4 million joined to a measureable SLA target. The 5 million or so unmatched rows were not evenly distributed across agencies, with 90% failling into HPD's domain, across the categories heat/hot water, unsanitary condition, and plumbing. This suggests it was not a join failure but a structural gap in the SLA framework itself. A second flag emerged while ranking agencies by the ratio of median resolution time to median SLA. NYPD, the largest agency by ticket volume, posted a ratio of .12, with a 94% compliance rate. When digging a bit beeper, every category across the NYPD's 18 complaint types showed median resolution time under one hour compared to an 8 hour SLA, including categories where physical resolution within minutes is implausible, such as blocked driveway, abandoned vehicle, and animal abuse. It is likely that tickets are marked as resolved on dispatch rather than whether the issue itself is resolved. The ratio ranking also highlighed two other agencies, Derpartment of Health and Mental Hygiene and the Economic Development Corporation. Both had median resolutions in the multi-year range, well beyond their SLA targets. Investigating further revealed examples of bulk-ticket closures. These bulk closures inflate apparent resolution times for affected complaint types and distort their compliance calculations, in the opposite direction from the NYPD dispatch-closure pattern. Together, these findings established that headline compliance numbers vary not only with actual service performance but also with how each agency interfaces with the 311 platform, which shapes the rest of the analysis.*
+
+## Table 1 — Agency-Level Resolution Metrics
+
+```{r tbl-agency-metrics}
+#| label: tbl-agency-metrics
+#| tbl-cap: "Agency-Level Resolution Time Metrics, January 2022 – December 2025"
+
+agency_metrics <- sr_with_sla %>%
+  filter(sla_status == "measurable",
+         !is.na(sla_hours), sla_hours > 0) %>%
+  group_by(agency_name) %>%
+  summarise(
+    n_requests            = n(),
+    n_closed              = sum(!is.na(resolution_hours) & resolution_hours >= 0),
+    pct_closed            = n_closed / n_requests,
+    mean_resolution_hrs   = mean(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0]),
+    median_resolution_hrs = median(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0]),
+    median_sla_hrs        = median(sla_hours),
+    pct_met_sla           = mean(met_sla, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  filter(n_requests >= 1000) %>%
+  arrange(desc(n_requests))
+
+agency_metrics %>%
+  mutate(
+    n_requests            = format(n_requests, big.mark = ","),
+    n_closed              = format(n_closed, big.mark = ","),
+    pct_closed            = scales::percent(pct_closed, accuracy = 0.1),
+    mean_resolution_hrs   = sprintf("%.1f", mean_resolution_hrs),
+    median_resolution_hrs = sprintf("%.1f", median_resolution_hrs),
+    median_sla_hrs        = sprintf("%.1f", median_sla_hrs),
+    pct_met_sla           = scales::percent(pct_met_sla, accuracy = 0.1)
+  ) %>%
+  kable(
+    col.names = c("Agency", "Requests", "Closed", "% Closed",
+                  "Mean Hrs", "Median Hrs", "Median SLA Hrs", "% Met SLA"),
+    align = c("l", "r", "r", "r", "r", "r", "r", "r")
+  ) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE, font_size = 12) %>%
+  scroll_box(width = "100%")
+```
+
+
+## Table 2 — Top SLA Targets by Agency
+
+```{r tbl-sla-targets}
+#| label: tbl-sla-targets
+#| tbl-cap: "Top 6 Most Common SLA Targets per Agency, by Request Volume"
+
+sla_targets <- sr_with_sla %>%
+  filter(sla_status == "measurable", !is.na(sla_hours), sla_hours > 0) %>%
+  count(agency_name, complaint_type, sla_days, sla_hours, name = "n_requests") %>%
+  group_by(agency_name) %>%
+  arrange(desc(n_requests), .by_group = TRUE) %>%
+  slice_head(n = 6) %>%
+  mutate(rank = row_number()) %>%
+  ungroup() %>%
+  arrange(agency_name, rank)
+
+sla_targets %>%
+  select(agency_name, rank, complaint_type, sla_days, n_requests) %>%
+  mutate(n_requests = format(n_requests, big.mark = ",")) %>%
+  kable(
+    col.names = c("Agency", "Rank", "Complaint Type", "SLA Target", "Requests"),
+    align = c("l", "c", "l", "l", "r")
+  ) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE, font_size = 11) %>%
+  collapse_rows(columns = 1, valign = "top") %>%
+  scroll_box(width = "100%", height = "500px")
+```
+
+---
+
+# Analysis: Agency Resolution Times Against SLA
+
+The core analysis computes, for each agency, the ratio of median actual resolution time to median published SLA target. A ratio of 1 means the agency closes its typical request exactly at its committed window; a ratio of 0.5 means twice as fast as committed; a ratio of 2 means twice as slow.
+
+## Computing the Agency Ratio
+
+```{r agency-ratio}
+#| label: agency-ratio
+
+agency_ratio <- sr_with_sla %>%
+  filter(sla_status == "measurable",
+         !is.na(sla_hours),
+         sla_hours > 0) %>%
+  group_by(agency) %>%
+  summarise(
+    n_total           = n(),
+    n_closed          = sum(!is.na(resolution_hours) & resolution_hours >= 0),
+    pct_closed        = n_closed / n_total,
+    median_resolution_hrs = median(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0]),
+    median_sla_hrs    = median(sla_hours),
+    ratio             = median_resolution_hrs / median_sla_hrs,
+    compliance_closed = mean(met_sla[!is.na(resolution_hours) & resolution_hours >= 0], na.rm = TRUE),
+    compliance_all    = mean(met_sla, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  filter(n_total >= 100) %>%
+  arrange(ratio)
+```
+
+## Headline Figure — Diverging Bar Chart
+
+```{r fig-diverging-bar}
+#| label: fig-diverging-bar
+#| fig-cap: "Each agency's bar shows the gap between actual median resolution time and the published SLA target on a doubling (log₂) scale. Bars left of center beat their SLA; bars right of center miss it."
+#| fig-width: 11
+#| fig-height: 7
+
+plot_data <- agency_ratio %>%
+  filter(n_total >= 1000, ratio > 0) %>%
+  mutate(
+    log2_ratio = log2(ratio),
+    classification = case_when(
+      agency %in% c("NYPD", "DOHMH", "EDC", "HPD") ~ "Measurement Issues",
+      compliance_all >= 0.60                       ~ "Meets SLA Reliably",
+      TRUE                                         ~ "Systematically Misses"
+    ),
+    sla_label = case_when(
+      median_sla_hrs < 24       ~ paste0(round(median_sla_hrs), " hr"),
+      median_sla_hrs < 24 * 7   ~ paste0(round(median_sla_hrs / 24), " day"),
+      median_sla_hrs < 24 * 30  ~ paste0(round(median_sla_hrs / (24 * 7)), " wk"),
+      median_sla_hrs < 24 * 365 ~ paste0(round(median_sla_hrs / (24 * 30)), " mo"),
+      TRUE                      ~ paste0(round(median_sla_hrs / (24 * 365), 1), " yr")
+    ),
+    y_label = sprintf("%s  (%s SLA, %.0f%% compliant)",
+                      agency, sla_label, compliance_all * 100)
+  ) %>%
+  arrange(log2_ratio)
+
+plot_data$y_label <- factor(plot_data$y_label, levels = plot_data$y_label)
+
+group_colors <- c(
+  "Meets SLA Reliably"    = "#1f4e79",
+  "Systematically Misses" = "#c0392b",
+  "Measurement Issues"    = "#7f7f7f"
+)
+
+ggplot(plot_data, aes(y = y_label, x = log2_ratio, fill = classification)) +
+  geom_vline(xintercept = c(-2, -1, 1, 2), color = "#eeeeee", linewidth = 0.5) +
+  geom_col(width = 0.7, alpha = 0.92) +
+  geom_vline(xintercept = 0, color = "#222222", linewidth = 0.6) +
+  scale_x_continuous(
+    breaks = c(-3, -2, -1, 0, 1, 2, 3),
+    labels = c("8x faster\nthan SLA", "4x faster", "2x faster",
+               "Matches\nSLA",
+               "2x slower", "4x slower", "8x slower\nthan SLA"),
+    expand = expansion(mult = c(0.05, 0.05))
+  ) +
+  scale_fill_manual(values = group_colors, name = NULL) +
+  labs(
+    title    = "Agency Resolution Times Compared to SLA Commitments",
+    subtitle = "Each bar shows the gap between actual median resolution time and the published SLA, on a doubling scale.",
+    x = NULL, y = NULL,
+    caption = paste0(
+      "Jan 2022 - Dec 2025. n = ", format(sum(plot_data$n_total), big.mark = ","),
+      " service requests with measurable SLA. Source: NYC OpenData (erm2-nwe9, cs9t-e3x8)."
+    )
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title         = element_text(face = "bold", size = 14, margin = margin(b = 4)),
+    plot.subtitle      = element_text(color = "#444444", size = 10, margin = margin(b = 14)),
+    plot.caption       = element_text(color = "#777777", size = 8, hjust = 0, margin = margin(t = 12)),
+    legend.position    = "top",
+    legend.justification = "left",
+    panel.grid.minor   = element_blank(),
+    panel.grid.major.y = element_blank(),
+    panel.grid.major.x = element_blank(),
+    axis.text.y        = element_text(size = 10, hjust = 1),
+    axis.text.x        = element_text(size = 9, color = "#555555", lineheight = 0.85),
+    plot.margin        = margin(14, 14, 14, 14)
+  )
+```
+
+> *This chart shows how NYC agencies' median resolution time compares to their SLA commitments, as well as the compliance rate for each agency. A 60% compliance rate was used as a baseline for determining if agencies reliably met their SLA commitments.*
+
+## Bootstrap Confidence Intervals — Agency Compliance Rates
+
+```{r bootstrap-compliance}
+#| label: fig-bootstrap-compliance
+#| fig-cap: "Bootstrap 95% confidence intervals for agency SLA compliance rates. Agencies with wider intervals have fewer tickets and therefore less certain estimates. Agencies flagged for measurement issues are shown in grey."
+#| fig-width: 10
+#| fig-height: 7
+
+library(purrr)
+
+set.seed(42)
+N_BOOT <- 1000
+
+bootstrap_ci <- sr_with_sla %>%
+  filter(sla_status == "measurable",
+         !is.na(sla_hours),
+         sla_hours > 0,
+         !is.na(met_sla)) %>%
+  group_by(agency) %>%
+  filter(n() >= 1000) %>%
+  summarise(
+    n_total      = n(),
+    observed_rate = mean(met_sla, na.rm = TRUE),
+    boot_ci = list({
+      x <- met_sla
+      boot_means <- replicate(N_BOOT, mean(sample(x, length(x), replace = TRUE), na.rm = TRUE))
+      quantile(boot_means, c(0.025, 0.975))
+    }),
+    .groups = "drop"
+  ) %>%
+  mutate(
+    ci_lo = map_dbl(boot_ci, 1),
+    ci_hi = map_dbl(boot_ci, 2),
+    classification = case_when(
+      agency %in% c("NYPD", "DOHMH", "EDC", "HPD") ~ "Measurement Issues",
+      observed_rate >= 0.60                         ~ "Meets SLA Reliably",
+      TRUE                                          ~ "Systematically Misses"
+    )
+  ) %>%
+  arrange(observed_rate)
+
+boot_colors <- c(
+  "Meets SLA Reliably"    = "#1f4e79",
+  "Systematically Misses" = "#c0392b",
+  "Measurement Issues"    = "#7f7f7f"
+)
+
+ggplot(bootstrap_ci, 
+       aes(x = observed_rate, 
+           y = reorder(agency, observed_rate),
+           color = classification)) +
+  geom_vline(xintercept = 0.60, linetype = "dashed", 
+             color = "#444444", linewidth = 0.5) +
+  geom_errorbarh(aes(xmin = ci_lo, xmax = ci_hi),
+                 height = 0.35, linewidth = 0.7, alpha = 0.7) +
+  geom_point(aes(size = log10(n_total)), alpha = 0.9) +
+  scale_x_continuous(labels = scales::percent_format(accuracy = 1),
+                     limits = c(0, 1),
+                     expand = expansion(mult = c(0.02, 0.02))) +
+  scale_color_manual(values = boot_colors, name = NULL) +
+  scale_size_continuous(name = "Requests (log₁₀)",
+                        range = c(2, 6),
+                        breaks = c(3, 4, 5, 6),
+                        labels = c("1K", "10K", "100K", "1M")) +
+  annotate("text", x = 0.61, y = 1.5, 
+           label = "60% threshold", hjust = 0,
+           size = 3, color = "#444444") +
+  labs(
+    title    = "Bootstrap Confidence Intervals for Agency SLA Compliance Rates",
+    subtitle = "Point = observed compliance rate. Bars = 95% bootstrap CI. Point size = request volume.",
+    x = "SLA Compliance Rate", y = NULL,
+    caption = paste0("Jan 2022 – Dec 2025. N = ",
+                     format(sum(bootstrap_ci$n_total), big.mark = ","),
+                     " service requests. 1,000 bootstrap resamples per agency.")
+  ) +
+  theme_minimal(base_size = 11) +
+  theme(
+    plot.title       = element_text(face = "bold", size = 14, margin = margin(b = 4)),
+    plot.subtitle    = element_text(color = "#444444", size = 10, margin = margin(b = 14)),
+    plot.caption     = element_text(color = "#777777", size = 8, hjust = 0),
+    legend.position  = "top",
+    panel.grid.minor = element_blank(),
+    panel.grid.major.y = element_blank(),
+    plot.margin      = margin(14, 14, 14, 14)
+  )
+```
+
+> *To assess the statistical certainty of agency compliance rates, bootstrap confidence intervals (1,000 samples) were computed for each agency. High-volume agencies like NYPD and DOT show very narrow intervals, while smaller agencies show wider uncertainty bands, reflecting the difference in sample size rather than true performance variability.*
+
+
+## Interactive Dashboard — Explore Agency Performance
+
+```{r interactive-dashboard}
+#| label: interactive-dashboard
+#| fig-cap: "Interactive Agency SLA Dashboard — select agencies in the table to highlight them in the chart."
+
+library(plotly)
+library(DT)
+library(crosstalk)
+
+# ---- Prepare shared data ----
+dashboard_data <- agency_ratio %>%
+  filter(n_total >= 1000, ratio > 0) %>%
+  mutate(
+    log2_ratio = log2(ratio),
+    classification = case_when(
+      agency %in% c("NYPD", "DOHMH", "EDC", "HPD") ~ "Measurement Issues",
+      compliance_all >= 0.60                        ~ "Meets SLA Reliably",
+      TRUE                                          ~ "Systematically Misses"
+    ),
+    sla_label = case_when(
+      median_sla_hrs < 24       ~ paste0(round(median_sla_hrs), " hr"),
+      median_sla_hrs < 24 * 7   ~ paste0(round(median_sla_hrs / 24), " day"),
+      median_sla_hrs < 24 * 30  ~ paste0(round(median_sla_hrs / (24 * 7)), " wk"),
+      median_sla_hrs < 24 * 365 ~ paste0(round(median_sla_hrs / (24 * 30)), " mo"),
+      TRUE                      ~ paste0(round(median_sla_hrs / (24 * 365), 1), " yr")
+    ),
+    compliance_pct  = scales::percent(compliance_all, accuracy = 0.1),
+    ratio_label     = sprintf("%.2fx", ratio),
+    tooltip_text    = paste0(
+      "<b>", agency, "</b><br>",
+      "Classification: ", classification, "<br>",
+      "Median Resolution: ", sprintf("%.1f", median_resolution_hrs), " hrs<br>",
+      "Median SLA: ", sla_label, "<br>",
+      "Ratio: ", ratio_label, "<br>",
+      "Compliance: ", compliance_pct, "<br>",
+      "Requests: ", format(n_total, big.mark = ",")
+    )
+  ) %>%
+  arrange(log2_ratio)
+
+# Shared data object for crosstalk
+shared_agencies <- SharedData$new(dashboard_data, key = ~agency)
+
+# ---- Color mapping ----
+color_map <- c(
+  "Meets SLA Reliably"    = "#1f4e79",
+  "Systematically Misses" = "#c0392b",
+  "Measurement Issues"    = "#7f7f7f"
+)
+
+# ---- Plotly diverging bar chart ----
+p <- shared_agencies %>%
+  plot_ly(
+    x           = ~log2_ratio,
+    y           = ~reorder(agency, -log2_ratio),
+    color       = ~classification,
+    colors      = color_map,
+    type        = "bar",
+    orientation = "h",
+    text        = ~tooltip_text,
+    hoverinfo   = "text",
+    marker      = list(opacity = 0.9)
+  ) %>%
+  layout(
+    title = list(
+      text = "<b>Agency Resolution Times vs SLA Commitments</b>",
+      font = list(size = 14)
+    ),
+    xaxis = list(
+      title         = "",
+      tickvals      = c(-3, -2, -1, 0, 1, 2, 3),
+      ticktext      = c("8x faster", "4x faster", "2x faster",
+                        "Matches SLA",
+                        "2x slower", "4x slower", "8x slower"),
+      zeroline      = TRUE,
+      zerolinecolor = "#222222",
+      zerolinewidth = 1.5,
+      gridcolor     = "#eeeeee"
+    ),
+    yaxis  = list(title = "", tickfont = list(size = 10)),
+    legend = list(orientation = "h", x = 0, y = 1.08),
+    margin = list(l = 120, r = 20, t = 60, b = 40),
+    plot_bgcolor  = "white",
+    paper_bgcolor = "white",
+    bargap = 0.3
+  ) %>%
+  highlight(on = "plotly_click", off = "plotly_doubleclick",
+            persistent = TRUE, opacityDim = 0.3)
+
+# ---- DT filterable table ----
+tbl <- shared_agencies %>%
+  datatable(
+    selection  = "multiple",
+    extensions = "Scroller",
+    rownames   = FALSE,
+    colnames   = c("Agency", "Requests", "Closed", "% Closed",
+                   "Median Res Hrs", "Median SLA Hrs", "Ratio",
+                   "Compliance (Closed)", "Compliance (All)", "Classification"),
+    options = list(
+      dom        = "fti",
+      scrollY    = 250,
+      scroller   = TRUE,
+      pageLength = 20,
+      columnDefs = list(
+        list(targets = c(1, 2),
+             render  = JS("function(data) { return data.toLocaleString(); }")),
+        list(targets = c(3, 7, 8),
+             render  = JS("function(data) { return (data * 100).toFixed(1) + '%'; }")),
+        list(targets = c(4, 5),
+             render  = JS("function(data) { return parseFloat(data).toFixed(1); }")),
+        list(targets = 6,
+             render  = JS("function(data) { return parseFloat(data).toFixed(3); }"))
+      )
+    )
+  ) %>%
+  formatStyle(
+    "classification",
+    backgroundColor = styleEqual(
+      c("Meets SLA Reliably", "Systematically Misses", "Measurement Issues"),
+      c("#d6e8f7",            "#fde8e6",               "#f0f0f0")
+    )
+  )
+
+# ---- Lay out side by side ----
+bscols(
+  widths = c(7, 5),
+  p,
+  tbl
+)
+```
+
+> *The dashboard below links the diverging bar chart to a filterable table. Click a bar to highlight that agency in the chart, or search and select rows in the table to highlight them in the chart. Hold Shift to select multiple agencies. Double-click to reset.*
+
+
+## Flagging Anomalous Agencies
+
+Some agencies show resolution-time patterns that suggest measurement irregularities rather than true performance: median resolution under 25% of SLA (suspiciously fast — likely auto-close behavior), 0% compliance among closed tickets (resolution-time logging appears broken), or ≥98% compliance (likely a closure convention rather than genuine performance).
+
+```{r flagged-agencies}
+#| label: tbl-flagged
+#| tbl-cap: "Agencies Flagged for Measurement Irregularities"
+
+flagged <- agency_ratio %>%
+  filter(ratio < 0.25 | compliance_closed == 0 | compliance_closed >= 0.98 |
+         compliance_all == 0)
+
+flagged %>%
+  mutate(
+    n_total           = format(n_total, big.mark = ","),
+    pct_closed        = scales::percent(pct_closed, accuracy = 0.1),
+    median_resolution_hrs = sprintf("%.2f", median_resolution_hrs),
+    median_sla_hrs    = sprintf("%.1f", median_sla_hrs),
+    ratio             = sprintf("%.3f", ratio),
+    compliance_closed = scales::percent(compliance_closed, accuracy = 0.1),
+    compliance_all    = scales::percent(compliance_all, accuracy = 0.1)
+  ) %>%
+  select(agency, n_total, pct_closed, median_resolution_hrs, median_sla_hrs,
+         ratio, compliance_closed, compliance_all) %>%
+  kable(
+    col.names = c("Agency", "Requests", "% Closed", "Median Res Hrs",
+                  "Median SLA Hrs", "Ratio", "% Met (Closed)", "% Met (All)"),
+    align = c("l", "r", "r", "r", "r", "r", "r", "r")
+  ) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE, font_size = 11)
+```
+
+
+## Drill-Down — A Closer Look at NYPD
+
+> *Of the 6 million or so NYPD tickets included in the dataset, 94% of resolutions were recorded as SLA compliant, with the median resolution time being under an hour against an 8 hour expected resolution time outlined in the SLA. This was a uniform pattern across all 18 NYPD complaint types found in the sample analysis. The NYPD 311 resolution data therefore cannot be used to accurately measure SLA performance.*
+
+```{r nypd-drilldown}
+#| label: tbl-nypd-drilldown
+#| tbl-cap: "NYPD Resolution-Time Performance by Complaint Type"
+
+target_agency <- "NYPD"
+
+agency_breakdown <- sr_with_sla %>%
+  filter(sla_status == "measurable",
+         agency == target_agency,
+         !is.na(sla_hours),
+         sla_hours > 0) %>%
+  group_by(complaint_type) %>%
+  summarise(
+    n_total           = n(),
+    n_closed          = sum(!is.na(resolution_hours) & resolution_hours >= 0),
+    pct_closed        = n_closed / n_total,
+    median_resolution_hrs = median(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0]),
+    p25_resolution_hrs    = quantile(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0], 0.25, na.rm = TRUE),
+    p75_resolution_hrs    = quantile(resolution_hours[!is.na(resolution_hours) & resolution_hours >= 0], 0.75, na.rm = TRUE),
+    median_sla_hrs    = median(sla_hours),
+    ratio             = median_resolution_hrs / median_sla_hrs,
+    compliance_closed = mean(met_sla[!is.na(resolution_hours) & resolution_hours >= 0], na.rm = TRUE),
+    compliance_all    = mean(met_sla, na.rm = TRUE),
+    .groups = "drop"
+  ) %>%
+  filter(n_total >= 30) %>%
+  arrange(ratio)
+
+agency_breakdown %>%
+  mutate(
+    n_total           = format(n_total, big.mark = ","),
+    pct_closed        = scales::percent(pct_closed, accuracy = 0.1),
+    median_resolution_hrs = sprintf("%.2f", median_resolution_hrs),
+    median_sla_hrs    = sprintf("%.1f", median_sla_hrs),
+    ratio             = sprintf("%.3f", ratio),
+    compliance_all    = scales::percent(compliance_all, accuracy = 0.1)
+  ) %>%
+  select(complaint_type, n_total, pct_closed,
+         median_resolution_hrs, median_sla_hrs, ratio, compliance_all) %>%
+  kable(
+    col.names = c("Complaint Type", "Requests", "% Closed",
+                  "Median Res Hrs", "Median SLA Hrs", "Ratio", "% Met SLA"),
+    align = c("l", "r", "r", "r", "r", "r", "r")
+  ) %>%
+  kable_styling(bootstrap_options = c("striped", "hover", "condensed"),
+                full_width = FALSE, font_size = 11) %>%
+  scroll_box(width = "100%", height = "400px")
+```
+
+---
+
+# Findings (SQ)
+
+> *While not every agency can be meaningfully evaluated using 311 request data, there were a few examples of agencies reliably meeting their SLA commitments, with even more agencies missing their commitments. The Department of Transportation and Department of Sanitation outperform other agencies, with median resolution times being at least twice as fast as their respective SLA commitments, and well as compliance rates of 85% and 70% respectively. The Department of Environment Protection is 64% compliant, but median resolution time is slower than SLA commitments. The Department of Education, Department of Parks and Recreation, Taxi and Limousine Commission, Department of Consumer and Worker Protection, and Department of Homeless Services were found to routinely miss the mark on meeting SLA commitments, with compliance rates ranging from 21-56%. The 311 request response data for the Department of Mental Health and Hygiene, NYPD, Economic Development Corporation and Department of Housing Preservation and Development were found to be unreliable and could not provide any meaningful insight into how these agencies performed against their SLAs.*
+
+---
+
+# Tying Back to the Overall Question (OQ)
+
+> *The SLA framework itself is evidence of segmented prioritization: which agency-complaint combinations have a published SLA that can be mapped to how 311 fields requests do not appear to be random. In particular, complaints to HPD regarding heat, hot water, and plumbing largely sit outside the SLA framework and these types of complaints are more likely to be submitted by lower-income tenants.*
+
+---
+
+# Limitations
+
+> *During initial data exploration, two bulk-closure events were found in the dataset. The Department of Health and Mental Hygiene closed 223 tickets in June 2024 that had been created in January 2022. Additionally, the EDC closed 272 helicopter noise related complaints in October 2024, all of which were created in January 2022. Additionally, there was a 47% no-match rate due to a structural issue with the data - 89% of tickets with no SLA match are in complaint categories that do not map to any published SLA. This is an administrative issue between how 311 fields requests and how agencies outline complaint types in their SLAs.*
+
+---
+
+# Conclusion
+
+> *Returning to the question that motivated this analysis - what factors drive 311 response and resolution times, and do they suggest segmented prioritization of issues - the agency-level evidence points to a more complicated answer than the headline compliance numbers suggest. Where Service Level Agreements exist and are measured cleanly, performance varies substantially: agencies like DOT and DEP meet their published commitments on most tickets, while DPR, TLC, and DHS systematically miss theirs. Where SLAs are technically tracked but the underlying measurement is unreliable, the published numbers conceal rather than reveal performance. NYPD's 94% compliance rests on tickets that close on dispatch, while DOHMH and EDC's apparent multi-year resolution times reflect administrative cleanup events rather than service delivery. The most consequential finding, however, is what falls outside the framework entirely: nearly 90% of unmatched tickets are HPD habitability complaints for heat, hot water, and plumbing, which sit largely outside any published commitment and therefore cannot be evaluated against one. While there may not be deliberate agency prioritization, the SLA framework itself encodes prioritization through which agency-complaint combinations it does and does not cover, and through which compliance measurements are structured in ways that resist meaningful scrutiny. 311 is a major platform for New Yorkers to voice their concerns and request support, and the evidence shows that the most common complaints - those affecting low-income tenants disproportionately - are also the ones least visible in the city's own accountability data. New York City agencies should be held accountable in their work serving the public, and a first step is ensuring that the SLA framework covers what New Yorkers actually call 311 about, and that compliance is measured against what residents experience rather than against the moment a ticket is administratively closed.*
+
+---
+
+# Appendix — Session Information
+
+```{r session-info}
+#| code-fold: true
+#| code-summary: "R session information"
+
+sessionInfo()
+```
